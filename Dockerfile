@@ -86,6 +86,7 @@ RUN php -m && \
         soap \
         zip \
         calendar \
+        pdo \
         pdo_mysql
 
 # Enable Xdebug
