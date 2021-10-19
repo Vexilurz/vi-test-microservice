@@ -13,7 +13,7 @@ class HomeController extends AbstractController
      */
     public function index(): Response
     {
-        $qwe = 0;
+       // $qwe = md5('secret');
         return $this->json([
             'message' => 'Welcome to your new controller!',
             'hello' => 'world!!!',

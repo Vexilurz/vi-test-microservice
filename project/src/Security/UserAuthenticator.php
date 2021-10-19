@@ -22,7 +22,8 @@ class UserAuthenticator extends AbstractAuthenticator
      */
     public function supports(Request $request): ?bool
     {
-        return $request->headers->has('X-AUTH-TOKEN');
+        //return $request->isMethod('POST') && $this->getLoginUrl($request) === $request->getPathInfo();
+        return false;//$request->headers->has('X-AUTH-TOKEN');
     }
 
     public function authenticate(Request $request): PassportInterface
