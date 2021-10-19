@@ -59,7 +59,9 @@ RUN apk add --update --no-cache icu-libs \
         su-exec \
         wget \
         nodejs \
-        npm
+        npm \
+        nano \
+        mc
 
 #  Install php extensions
 RUN php -m && \
@@ -91,10 +93,16 @@ RUN php -m && \
 
 # Enable Xdebug
 RUN if [ "${DOCKER_PHP_ENABLE_XDEBUG}" == "on" ]; then \
-      yes | pecl install xdebug && \
+      yes | pecl install xdebug-2.9.8 && \
       echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini && \
-      echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/xdebug.ini && \
-      echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/xdebug.ini && \
+      chmod +x "$(find /usr/local/lib/php/extensions/ -name xdebug.so)" && \
+      echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/xdebug.ini && \
+      echo "xdebug.remote_autostart=1" >> /usr/local/etc/php/conf.d/xdebug.ini && \
+      echo "xdebug.remote_port=9001" >> /usr/local/etc/php/conf.d/xdebug.ini && \
+      echo "xdebug.remote_host=${XDEBUG_HOST}" >> /usr/local/etc/php/conf.d/xdebug.ini && \
+      echo "xdebug.remote_handler=dbgp" >> /usr/local/etc/php/conf.d/xdebug.ini && \
+      echo "xdebug.remote_connect_back=0" >> /usr/local/etc/php/conf.d/xdebug.ini && \
+      echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/xdebug.ini && \
       php -m; \
     else \
       echo "Skip xdebug support"; \
@@ -119,5 +127,7 @@ RUN mv /root/.symfony/bin/symfony /usr/local/bin/symfony
 USER www-data:www-data
 
 WORKDIR /var/www/
+
+#USER root
 
 CMD bash -c "composer update && php-fpm"

@@ -60,7 +60,8 @@ services:
       - ./project:/var/www
       - ./php.ini:/usr/local/etc/php/php.ini
       - ./php-workers/supervisor.d:/etc/supervisor.d
-    ports:
-      - "${PHP_PORT}:9000"
+#    ports:
+#      - "${PHP_PORT}:9000"
+#      - "9001:9001"
     networks:
       - backend
