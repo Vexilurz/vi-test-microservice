@@ -100,9 +100,9 @@ RUN if [ "${DOCKER_PHP_ENABLE_XDEBUG}" == "on" ]; then \
     fi
 
 # Install phpunit
-# RUN wget https://phar.phpunit.de/phpunit-6.0.phar && \
-#        chmod +x phpunit-6.0.phar && \
-#        mv phpunit-6.0.phar /usr/local/bin/phpunit
+RUN wget https://phar.phpunit.de/phpunit-9.phar && \
+    chmod +x phpunit-9.phar && \
+    mv phpunit-9.phar /usr/local/bin/phpunit
 
 # Clean
 RUN rm -rf /var/cache/apk/* && docker-php-source delete
@@ -118,3 +118,5 @@ RUN mv /root/.symfony/bin/symfony /usr/local/bin/symfony
 USER www-data:www-data
 
 WORKDIR /var/www/
+
+CMD bash -c "composer update && php-fpm"

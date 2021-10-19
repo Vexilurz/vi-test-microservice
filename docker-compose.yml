@@ -61,11 +61,3 @@ services:
       - "${PHP_PORT}:9000"
     networks:
       - backend
-
-  composer:
-    image: composer:latest
-    container_name: composer-update
-    working_dir: /var/www
-    command: [ "composer", "update" ]
-    volumes:
-      - ./project:/var/www
