@@ -52,6 +52,8 @@ services:
       args:
         DOCKER_PHP_VERSION: '7.4'
         DOCKER_PHP_ENABLE_XDEBUG: ${DOCKER_PHP_ENABLE_XDEBUG}
+        XDEBUG_TARGET_HOST: ${XDEBUG_TARGET_HOST}
+        XDEBUG_TARGET_PORT: ${XDEBUG_TARGET_PORT}
         TZ: ${WORKSPACE_TIMEZONE}
     working_dir: /var/www
     container_name: php
