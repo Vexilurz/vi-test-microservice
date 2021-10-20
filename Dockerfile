@@ -98,8 +98,8 @@ RUN if [ "${DOCKER_PHP_ENABLE_XDEBUG}" == "on" ]; then \
       chmod +x "$(find /usr/local/lib/php/extensions/ -name xdebug.so)" && \
       echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/xdebug.ini && \
       echo "xdebug.remote_autostart=1" >> /usr/local/etc/php/conf.d/xdebug.ini && \
-      echo "xdebug.remote_port=${XDEBUG_TARGET_PORT}" >> /usr/local/etc/php/conf.d/xdebug.ini && \
-      echo "xdebug.remote_host=${XDEBUG_TARGET_HOST}" >> /usr/local/etc/php/conf.d/xdebug.ini && \
+      echo "xdebug.remote_port=9001" >> /usr/local/etc/php/conf.d/xdebug.ini && \
+      echo "xdebug.remote_host=192.168.1.34" >> /usr/local/etc/php/conf.d/xdebug.ini && \
       echo "xdebug.remote_handler=dbgp" >> /usr/local/etc/php/conf.d/xdebug.ini && \
       echo "xdebug.remote_connect_back=0" >> /usr/local/etc/php/conf.d/xdebug.ini && \
       echo "xdebug.idekey=PHPSTORM" >> /usr/local/etc/php/conf.d/xdebug.ini && \

@@ -25,7 +25,14 @@ class UserFixtures extends Fixture
             0 => [
                 'email' => 'user@example.com',
                 'role' => ['ROLE_USER'],
-                'password' => 123456
+                'password' => 123456,
+                'api_token' => '123qwe'
+            ],
+            1 => [
+                'email' => 'user2@example.com',
+                'role' => ['ROLE_USER'],
+                'password' => 111111,
+                'api_token' => '123qwezxc'
             ]
         ];
 
@@ -34,6 +41,7 @@ class UserFixtures extends Fixture
             $newUser->setEmail($user['email']);
             $newUser->setPassword($this->encoder->hashPassword($newUser, $user['password']));
             $newUser->setRoles($user['role']);
+            $newUser->setApiToken($user['api_token']);
             $this->em->persist($newUser);
         }
 

@@ -2,19 +2,32 @@
 
 namespace App\Security;
 
+use App\Entity\User;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 
-class UserAuthenticator extends AbstractAuthenticator
+class TokenGuard extends AbstractAuthenticator
 {
+
+    private RequestChecker $requestChecker;
+    private $entityManager;
+
+    public function __construct(EntityManagerInterface $entityManager, RequestChecker $requestChecker)
+    {
+        $this->entityManager = $entityManager;
+        $this->requestChecker = $requestChecker;
+    }
+
     /**
      * Called on every request to decide if this authenticator should be
      * used for the request. Returning `false` will cause this authenticator
@@ -22,8 +35,7 @@ class UserAuthenticator extends AbstractAuthenticator
      */
     public function supports(Request $request): ?bool
     {
-        //return $request->isMethod('POST') && $this->getLoginUrl($request) === $request->getPathInfo();
-        return false;//$request->headers->has('X-AUTH-TOKEN');
+        return !$this->requestChecker->isLoginEndpoint($request);
     }
 
     public function authenticate(Request $request): PassportInterface
@@ -35,7 +47,12 @@ class UserAuthenticator extends AbstractAuthenticator
             throw new CustomUserMessageAuthenticationException('No API token provided');
         }
 
-        return new SelfValidatingPassport(new UserBadge($apiToken));
+        $user = $this->entityManager->getRepository(User::class)->findOneBy(['apiToken' => $apiToken]);
+        if (null === $user) {
+            throw new UserNotFoundException();
+        }
+
+        return new SelfValidatingPassport(new UserBadge($user->getEmail()));
     }
 
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
