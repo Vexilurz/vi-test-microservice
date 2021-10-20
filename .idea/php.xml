@@ -110,6 +110,47 @@
       <path value="$PROJECT_DIR$/project/vendor/doctrine/common" />
       <path value="$PROJECT_DIR$/project/vendor/doctrine/doctrine-migrations-bundle" />
       <path value="$PROJECT_DIR$/project/vendor/doctrine/doctrine-fixtures-bundle" />
+      <path value="$PROJECT_DIR$/project/vendor/phpunit/phpunit" />
+      <path value="$PROJECT_DIR$/project/vendor/phpunit/php-timer" />
+      <path value="$PROJECT_DIR$/project/vendor/phpunit/php-text-template" />
+      <path value="$PROJECT_DIR$/project/vendor/phpunit/php-invoker" />
+      <path value="$PROJECT_DIR$/project/vendor/phpunit/php-file-iterator" />
+      <path value="$PROJECT_DIR$/project/vendor/phpunit/php-code-coverage" />
+      <path value="$PROJECT_DIR$/project/vendor/symfony/phpunit-bridge" />
+      <path value="$PROJECT_DIR$/project/vendor/symfony/css-selector" />
+      <path value="$PROJECT_DIR$/project/vendor/symfony/dom-crawler" />
+      <path value="$PROJECT_DIR$/project/vendor/symfony/browser-kit" />
+      <path value="$PROJECT_DIR$/project/vendor/theseer/tokenizer" />
+      <path value="$PROJECT_DIR$/project/vendor/sebastian/version" />
+      <path value="$PROJECT_DIR$/project/vendor/sebastian/type" />
+      <path value="$PROJECT_DIR$/project/vendor/sebastian/resource-operations" />
+      <path value="$PROJECT_DIR$/project/vendor/sebastian/recursion-context" />
+      <path value="$PROJECT_DIR$/project/vendor/sebastian/object-reflector" />
+      <path value="$PROJECT_DIR$/project/vendor/myclabs/deep-copy" />
+      <path value="$PROJECT_DIR$/project/vendor/sebastian/object-enumerator" />
+      <path value="$PROJECT_DIR$/project/vendor/sebastian/lines-of-code" />
+      <path value="$PROJECT_DIR$/project/vendor/sebastian/global-state" />
+      <path value="$PROJECT_DIR$/project/vendor/sebastian/exporter" />
+      <path value="$PROJECT_DIR$/project/vendor/sebastian/environment" />
+      <path value="$PROJECT_DIR$/project/vendor/sebastian/diff" />
+      <path value="$PROJECT_DIR$/project/vendor/sebastian/complexity" />
+      <path value="$PROJECT_DIR$/project/vendor/sebastian/comparator" />
+      <path value="$PROJECT_DIR$/project/vendor/sebastian/code-unit-reverse-lookup" />
+      <path value="$PROJECT_DIR$/project/vendor/sebastian/code-unit" />
+      <path value="$PROJECT_DIR$/project/vendor/sebastian/cli-parser" />
+      <path value="$PROJECT_DIR$/project/vendor/webmozart/assert" />
+      <path value="$PROJECT_DIR$/project/vendor/phpdocumentor/type-resolver" />
+      <path value="$PROJECT_DIR$/project/vendor/phpdocumentor/reflection-docblock" />
+      <path value="$PROJECT_DIR$/project/vendor/phpdocumentor/reflection-common" />
+      <path value="$PROJECT_DIR$/project/vendor/phar-io/version" />
+      <path value="$PROJECT_DIR$/project/vendor/phar-io/manifest" />
+      <path value="$PROJECT_DIR$/project/vendor/phpspec/prophecy" />
+      <path value="$PROJECT_DIR$/project/vendor/symfony/http-client" />
+      <path value="$PROJECT_DIR$/project/vendor/symfony/translation-contracts" />
+      <path value="$PROJECT_DIR$/project/vendor/symfony/asset" />
+      <path value="$PROJECT_DIR$/project/vendor/symfony/serializer" />
+      <path value="$PROJECT_DIR$/project/vendor/symfony/expression-language" />
+      <path value="$PROJECT_DIR$/project/vendor/symfony/validator" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
@@ -188,5 +229,10 @@
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4">
     <option name="suggestChangeDefaultLanguageLevel" value="false" />
+  </component>
+  <component name="PhpUnit">
+    <phpunit_settings>
+      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/project/vendor/autoload.php" />
+    </phpunit_settings>
   </component>
 </project>
