@@ -22,17 +22,13 @@ class UserFixtures extends Fixture
     public function load(\Doctrine\Persistence\ObjectManager $manager)
     {
         $usersData = [
-            0 => [
+            [
                 'email' => 'user@example.com',
-                'role' => ['ROLE_USER'],
-                'password' => 123456,
-                'api_token' => '123qwe'
+                'password' => 123456
             ],
-            1 => [
+            [
                 'email' => 'user2@example.com',
-                'role' => ['ROLE_USER'],
-                'password' => 111111,
-                'api_token' => '123qwezxc'
+                'password' => 111111
             ]
         ];
 
@@ -40,8 +36,7 @@ class UserFixtures extends Fixture
             $newUser = new User();
             $newUser->setEmail($user['email']);
             $newUser->setPassword($this->encoder->hashPassword($newUser, $user['password']));
-            $newUser->setRoles($user['role']);
-            $newUser->setApiToken($user['api_token']);
+            $newUser->setRoles(['ROLE_USER']);
             $this->em->persist($newUser);
         }
 

@@ -7,24 +7,23 @@ namespace App\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class RequestChecker
+abstract class RequestChecker
 {
-    // Must match with AuthController /login name
-    private const LOGIN_ROUTE = 'app_login';
-
     private UrlGeneratorInterface $urlGenerator;
+    private $routeName;
 
-    public function __construct(UrlGeneratorInterface $urlGenerator)
+    protected function __construct(UrlGeneratorInterface $urlGenerator, string $routeName)
     {
         $this->urlGenerator = $urlGenerator;
+        $this->routeName = $routeName;
     }
 
-    public function isLoginEndpoint(Request $request): bool {
-        return $request->isMethod('POST') && $this->getLoginUrl($request) === $request->getPathInfo();
+    public function isEndpointMatch(Request $request): bool {
+        return $request->isMethod('POST') && $this->getLoginUrl($this->routeName) === $request->getPathInfo();
     }
 
-    private function getLoginUrl(Request $request): string
+    private function getLoginUrl(string $routeName): string
     {
-        return $this->urlGenerator->generate(self::LOGIN_ROUTE);
+        return $this->urlGenerator->generate($routeName);
     }
 }

@@ -18,14 +18,16 @@ use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPasspor
 
 class TokenGuard extends AbstractAuthenticator
 {
-
-    private RequestChecker $requestChecker;
     private $entityManager;
+    private $requestCheckers = [];
 
-    public function __construct(EntityManagerInterface $entityManager, RequestChecker $requestChecker)
+    public function __construct(EntityManagerInterface $entityManager,
+                                LoginRequestChecker $loginRequestChecker,
+                                RegistrationRequestChecker $registrationRequestChecker)
     {
         $this->entityManager = $entityManager;
-        $this->requestChecker = $requestChecker;
+        $this->requestCheckers[] = $loginRequestChecker;
+        $this->requestCheckers[] = $registrationRequestChecker;
     }
 
     /**
@@ -35,7 +37,12 @@ class TokenGuard extends AbstractAuthenticator
      */
     public function supports(Request $request): ?bool
     {
-        return !$this->requestChecker->isLoginEndpoint($request);
+        foreach ($this->requestCheckers as $requestChecker) {
+            if ($requestChecker->isEndpointMatch($request)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public function authenticate(Request $request): PassportInterface

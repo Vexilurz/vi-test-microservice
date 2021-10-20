@@ -15,9 +15,9 @@ use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 
 class LoginAuthenticator extends AbstractAuthenticator
 {
-    private RequestChecker $requestChecker;
+    private LoginRequestChecker $requestChecker;
 
-    public function __construct(RequestChecker $requestChecker)
+    public function __construct(LoginRequestChecker $requestChecker)
     {
         $this->requestChecker = $requestChecker;
     }
@@ -29,7 +29,7 @@ class LoginAuthenticator extends AbstractAuthenticator
      */
     public function supports(Request $request): ?bool
     {
-        return $this->requestChecker->isLoginEndpoint($request);
+        return $this->requestChecker->isEndpointMatch($request);
     }
 
     public function authenticate(Request $request): PassportInterface

@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
@@ -17,9 +18,12 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    public function __construct(ManagerRegistry $registry)
+    private $encoder;
+
+    public function __construct(ManagerRegistry $registry, UserPasswordHasherInterface $encoder)
     {
         parent::__construct($registry, User::class);
+        $this->encoder = $encoder;
     }
 
     /**
@@ -34,6 +38,30 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $user->setPassword($newHashedPassword);
         $this->_em->persist($user);
         $this->_em->flush();
+    }
+
+    private function getNewApiToken(): string {
+        return md5(microtime());
+    }
+
+    public function create (string $email, string $password): User {
+        $newUser = new User();
+        $newUser->setEmail($email);
+        $newUser->setPassword($this->encoder->hashPassword($newUser, $password));
+        $newUser->setApiToken($this->getNewApiToken());
+        $newUser->setRoles(['ROLE_USER']);
+        $this->_em->persist($newUser);
+        $this->_em->flush();
+
+        return $newUser;
+    }
+
+    public function login (string $email): User {
+        $user = $this->findOneBy(['email' => $email]);
+        $user->setApiToken($this->getNewApiToken());
+        $this->_em->flush();
+
+        return $user;
     }
 
     // /**
