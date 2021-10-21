@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Security;
+namespace App\Security\RequestChecker;
 
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 

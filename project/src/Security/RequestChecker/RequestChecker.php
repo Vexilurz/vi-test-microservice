@@ -1,16 +1,14 @@
 <?php
 
-
-namespace App\Security;
-
+namespace App\Security\RequestChecker;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-abstract class RequestChecker
+abstract class RequestChecker implements RequestCheckerInterface
 {
     private UrlGeneratorInterface $urlGenerator;
-    private $routeName;
+    private string $routeName;
 
     protected function __construct(UrlGeneratorInterface $urlGenerator, string $routeName)
     {

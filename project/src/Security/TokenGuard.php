@@ -3,6 +3,7 @@
 namespace App\Security;
 
 use App\Entity\User;
+use App\Security\RequestChecker\TokenGuardRequestChecker;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,38 +12,19 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Symfony\Component\Security\Core\Exception\CustomUserMessageAuthenticationException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
-use Symfony\Component\Security\Http\Authenticator\AbstractAuthenticator;
 use Symfony\Component\Security\Http\Authenticator\Passport\Badge\UserBadge;
 use Symfony\Component\Security\Http\Authenticator\Passport\PassportInterface;
 use Symfony\Component\Security\Http\Authenticator\Passport\SelfValidatingPassport;
 
-class TokenGuard extends AbstractAuthenticator
+class TokenGuard extends EndpointCheckAuthenticator
 {
     private $entityManager;
-    private $requestCheckers = [];
 
     public function __construct(EntityManagerInterface $entityManager,
-                                LoginRequestChecker $loginRequestChecker,
-                                RegistrationRequestChecker $registrationRequestChecker)
+                                TokenGuardRequestChecker $requestChecker)
     {
+        parent::__construct($requestChecker);
         $this->entityManager = $entityManager;
-        $this->requestCheckers[] = $loginRequestChecker;
-        $this->requestCheckers[] = $registrationRequestChecker;
-    }
-
-    /**
-     * Called on every request to decide if this authenticator should be
-     * used for the request. Returning `false` will cause this authenticator
-     * to be skipped.
-     */
-    public function supports(Request $request): ?bool
-    {
-        foreach ($this->requestCheckers as $requestChecker) {
-            if ($requestChecker->isEndpointMatch($request)) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public function authenticate(Request $request): PassportInterface
