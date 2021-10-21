@@ -26,7 +26,7 @@ class Order
     private $user;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", options={"default" : false})
      */
     private $paid;
 
@@ -46,7 +46,7 @@ class Order
     private $products;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="float", options={"default" : 0})
      */
     private $totalPrice;
 

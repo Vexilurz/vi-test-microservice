@@ -25,12 +25,12 @@ class Product
     private $name;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="float", options={"default" : 0})
      */
     private $price;
 
     /**
-     * @ORM\Column(type="boolean")
+     * @ORM\Column(type="boolean", options={"default" : true})
      */
     private $available;
 
