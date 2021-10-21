@@ -19,6 +19,19 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
+    public function add(string $name, float $price): Product {
+        $newProduct = new Product();
+        $newProduct->setName($name);
+        $newProduct->setPrice($price);
+        $datetime = new \DateTimeImmutable('now');
+        $newProduct->setCreatedAt($datetime);
+        $newProduct->setUpdatedAt($datetime);
+        $newProduct->setAvailable(true);
+        $this->_em->persist($newProduct);
+        $this->_em->flush();
+        return $newProduct;
+    }
+
     // /**
     //  * @return Product[] Returns an array of Product objects
     //  */
