@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Order;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,6 +18,19 @@ class OrderRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Order::class);
+    }
+
+    public function create(User $user): Order {
+        $newOrder = new Order();
+        $newOrder->setUser($user);
+        $newOrder->setTotalPrice(0);
+        $newOrder->setPaid(false);
+        $datetime = new \DateTimeImmutable('now');
+        $newOrder->setCreatedAt($datetime);
+        $newOrder->setUpdatedAt($datetime);
+        $this->_em->persist($newOrder);
+        $this->_em->flush();
+        return $newOrder;
     }
 
     // /**
