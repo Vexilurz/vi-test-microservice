@@ -7,6 +7,7 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
@@ -44,7 +45,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return md5(microtime());
     }
 
-    public function create (string $email, string $password): User {
+    public function create(string $email, string $password): User {
         $newUser = new User();
         $newUser->setEmail($email);
         $newUser->setPassword($this->encoder->hashPassword($newUser, $password));
@@ -56,11 +57,21 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $newUser;
     }
 
-    public function login (string $email): User {
+    public function login(string $email): User {
         $user = $this->findOneBy(['email' => $email]);
         $user->setApiToken($this->getNewApiToken());
         $this->_em->flush();
 
+        return $user;
+    }
+
+    public function logout(string $apiToken): User {
+        $user = $this->findOneBy(['apiToken' => $apiToken]);
+        if (null === $user) {
+            throw new UserNotFoundException();
+        }
+        $user->setApiToken(null);
+        $this->_em->flush();
         return $user;
     }
 

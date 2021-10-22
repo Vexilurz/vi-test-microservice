@@ -12,7 +12,7 @@ use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 
 class AuthController extends AbstractController
 {
-    private $userRepository;
+    private UserRepository $userRepository;
 
     public function __construct(UserRepository $userRepository)
     {
@@ -75,12 +75,7 @@ class AuthController extends AbstractController
     public function logout(Request $request): Response
     {
         $apiToken = $request->headers->get('X-AUTH-TOKEN');
-        $user = $this->entityManager->getRepository(User::class)->findOneBy(['apiToken' => $apiToken]);
-        if (null === $user) {
-            throw new UserNotFoundException();
-        }
-        $user->setApiToken(null);
-        $this->entityManager->flush();
+        $user = $this->userRepository->logout($apiToken);
 
         return $this->json([
             'message' => 'logout success'
