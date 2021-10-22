@@ -22,14 +22,10 @@ class AuthController extends AbstractController
     // name="app_login" must match with LoginRequestChecker LOGIN_ROUTE constant
     // guards by LoginAuthenticator
     /**
-     * @Route("/login", name="app_login")
+     * @Route("/login", name="app_login", methods={"POST"})
      */
     public function login(Request $request): Response
     {
-        if (!$request->isMethod('POST')) {
-            return $this->json(['message'=>'Must be a POST method'], Response::HTTP_BAD_REQUEST);
-        }
-
         $email = $request->request->get('email', '');
         $user = $this->userRepository->login($email);
 
@@ -42,14 +38,10 @@ class AuthController extends AbstractController
     // name="app_login" must match with RegistrationRequestChecker REGISTRATION_ROUTE constant
     // this method is not guarding by authenticators
     /**
-     * @Route("/register", name="app_registration")
+     * @Route("/register", name="app_registration", methods={"POST"})
      */
     public function register(Request $request): Response
     {
-        if (!$request->isMethod('POST')) {
-            return $this->json(['message'=>'Must be a POST method'], Response::HTTP_BAD_REQUEST);
-        }
-
         $email = $request->request->get('email', '');
         $password = $request->request->get('password', '');
         if (!$email || !$password) {

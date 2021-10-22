@@ -14,14 +14,10 @@ use Symfony\Component\Routing\Annotation\Route;
 class ProductController extends AbstractController
 {
     /**
-     * @Route("/add", name="product_add")
+     * @Route("/add", name="product_add", methods={"POST"})
      */
     public function add(Request $request, ProductRepository $productRepository): Response
     {
-        if (!$request->isMethod('POST')) {
-            return $this->json(['message'=>'Must be a POST method'], Response::HTTP_BAD_REQUEST);
-        }
-
         $name = $request->request->get('name', '');
         $price = $request->request->get('price', 0);
         if (!$name) {

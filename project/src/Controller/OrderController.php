@@ -17,15 +17,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class OrderController extends AbstractController
 {
     /**
-     * @Route("/create", name="order_create")
+     * @Route("/create", name="order_create", methods={"POST"})
      */
     public function create(Request $request, OrderRepository $orderRepository,
                            UserRepository $userRepository): Response
     {
-        if (!$request->isMethod('POST')) {
-            return $this->json(['message'=>'Must be a POST method'], Response::HTTP_BAD_REQUEST);
-        }
-
         $apiToken = $request->headers->get('X-AUTH-TOKEN');
         $user = $userRepository->findOneBy(['apiToken' => $apiToken]);
         $order = $orderRepository->create($user);
@@ -37,17 +33,13 @@ class OrderController extends AbstractController
     }
 
     /**
-     * @Route("/add_product", name="order_add_product")
+     * @Route("/add_product", name="order_add_product", methods={"POST"})
      */
     public function addProduct(Request $request, OrderRepository $orderRepository,
                                ProductRepository $productRepository,
                                UserRepository $userRepository,
                                EntityManagerInterface $entityManager): Response
     {
-        if (!$request->isMethod('POST')) {
-            return $this->json(['message'=>'Must be a POST method'], Response::HTTP_BAD_REQUEST);
-        }
-
         $apiToken = $request->headers->get('X-AUTH-TOKEN');
         $userFromToken = $userRepository->findOneBy(['apiToken' => $apiToken]);
 
@@ -76,17 +68,13 @@ class OrderController extends AbstractController
     }
 
     /**
-     * @Route("/remove_product", name="order_remove_product")
+     * @Route("/remove_product", name="order_remove_product", methods={"POST"})
      */
     public function removeProduct(Request $request, OrderRepository $orderRepository,
                                ProductRepository $productRepository,
                                UserRepository $userRepository,
                                EntityManagerInterface $entityManager): Response
     {
-        if (!$request->isMethod('POST')) {
-            return $this->json(['message'=>'Must be a POST method'], Response::HTTP_BAD_REQUEST);
-        }
-
         $apiToken = $request->headers->get('X-AUTH-TOKEN');
         $userFromToken = $userRepository->findOneBy(['apiToken' => $apiToken]);
 
