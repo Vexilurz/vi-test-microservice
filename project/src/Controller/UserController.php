@@ -4,17 +4,11 @@ namespace App\Controller;
 
 use App\Repository\OrderRepository;
 use App\Repository\UserRepository;
-use Doctrine\Common\Annotations\AnnotationReader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\Encoder\JsonEncoder;
-use Symfony\Component\Serializer\Mapping\Factory\ClassMetadataFactory;
-use Symfony\Component\Serializer\Mapping\Loader\AnnotationLoader;
-use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
-use Symfony\Component\Serializer\Serializer;
 
 /**
  * @Route("/user", name="user")
@@ -36,7 +30,7 @@ class UserController extends AbstractController
     public function getOrders(Request $request): Response
     {
         $user = $this->userRepository->getFromRequest($request);
-        $orders = $user->getOrdersSerialized();
+        $orders = $this->userRepository->getOrdersSerialized($user->getOrders());
 
         return $this->json($orders);
     }
@@ -46,10 +40,12 @@ class UserController extends AbstractController
      */
     public function getOrdersByUserId($userId): Response
     {
-        return $this->json([
-            'message' => 'Welcome to your new controller!',
-            'path' => 'src/Controller/UserController.php',
-            'id' => $userId
-        ]);
+        $user = $this->userRepository->find($userId);
+        if (!$user) {
+            throw new NotFoundHttpException('user not found');
+        }
+        $orders = $this->userRepository->getOrdersSerialized($user->getOrders());
+
+        return $this->json($orders);
     }
 }

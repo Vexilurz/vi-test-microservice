@@ -83,6 +83,15 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $user;
     }
 
+    public function getOrdersSerialized($orders) {
+        $ordersSerialized = [];
+        foreach ($orders as $order) {
+            $ordersSerialized[] = $order->getSerialized();
+        }
+
+        return $ordersSerialized;
+    }
+
     // /**
     //  * @return User[] Returns an array of User objects
     //  */

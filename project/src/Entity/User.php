@@ -189,14 +189,4 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             'email' => $this->getEmail()
         ];
     }
-
-    public function getOrdersSerialized() {
-        $orders = $this->getOrders();
-        $ordersSerialized = [];
-        foreach ($orders as $order) {
-            $ordersSerialized[] = $order->getSerialized();
-        }
-
-        return $ordersSerialized;
-    }
 }
