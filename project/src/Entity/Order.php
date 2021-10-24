@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\OrderRepository;
+use App\Utils\Serializer;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -142,5 +143,24 @@ class Order
         $this->totalPrice = $totalPrice;
 
         return $this;
+    }
+
+    public function getSerialized(array $options = []): array
+    {
+        $products = $this->getProducts();
+        $productsSerialized = Serializer::getSerializedFromArray($products);
+        $result = [
+            'id' => $this->getId(),
+            'paid' => $this->getPaid(),
+            'totalPrice' => $this->getTotalPrice(),
+            'products' => $productsSerialized,
+            'createdAt' => $this->getCreatedAt()->getTimestamp(),
+            'updatedAt' => $this->getUpdatedAt()->getTimestamp()
+        ];
+        if ($options['includeUser']) {
+            $result['user'] = $this->getUser()->getSerialized();
+        }
+
+        return $result;
     }
 }

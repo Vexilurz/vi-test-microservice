@@ -24,8 +24,7 @@ class AuthController extends AbstractController
      */
     public function login(Request $request): Response
     {
-        $email = $request->request->get('email', '');
-        $user = $this->userRepository->login($email);
+        $user = $this->userRepository->login($request);
 
         return $this->json([
             'message' => 'login success',
@@ -45,7 +44,7 @@ class AuthController extends AbstractController
         if (!$email || !$password) {
             return $this->json(['message'=>'email or password is empty'], Response::HTTP_BAD_REQUEST);
         }
-
+        //TODO: add validators
         $user = $this->userRepository->findOneBy(['email' => $email]);
         if ($user) {
             return $this->json(['message'=>'user already exists'], Response::HTTP_BAD_REQUEST);

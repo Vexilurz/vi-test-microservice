@@ -9,7 +9,7 @@ class OrderProductAddService extends OrderProductService
 {
     protected function orderProductAction(Order $order, Product $product): string
     {
-        $order->addProduct($product);
+        $this->orderRepository->addProduct($order, $product);
         return 'product added to order';
     }
 }

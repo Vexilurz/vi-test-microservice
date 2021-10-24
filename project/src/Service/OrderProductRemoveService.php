@@ -9,7 +9,7 @@ class OrderProductRemoveService extends OrderProductService
 {
     protected function orderProductAction(Order $order, Product $product): string
     {
-        $order->removeProduct($product);
+        $this->orderRepository->removeProduct($order, $product);
         return 'product removed from order';
     }
 }

@@ -182,4 +182,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+
+    public function getSerialized(array $options = []): array
+    {
+        return [
+            'id' => $this->getId(),
+            'email' => $this->getEmail()
+        ];
+    }
 }

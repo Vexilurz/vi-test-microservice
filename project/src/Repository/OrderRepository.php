@@ -3,12 +3,11 @@
 namespace App\Repository;
 
 use App\Entity\Order;
+use App\Entity\Product;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use function Doctrine\ORM\QueryBuilder;
 
 /**
  * @method Order|null find($id, $lockMode = null, $lockVersion = null)
@@ -21,15 +20,6 @@ class OrderRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Order::class);
-    }
-
-    public function getFromRequest(Request $request): Order {
-        $orderId = $request->request->get('orderId', 0);
-        $order = $this->find($orderId);
-        if (!$order) {
-            throw new NotFoundHttpException('order not found');
-        }
-        return $order;
     }
 
     public function create(User $user): Order {
@@ -45,17 +35,51 @@ class OrderRepository extends ServiceEntityRepository
         return $newOrder;
     }
 
-    public function checkOrderBelongsToUser(Order $order, User $user): bool {
-        if ($order->getUser() !== $user) {
-            throw new AccessDeniedHttpException('user is not the owner of the order');
-        }
-        return true;
-    }
-
     public function setPaid(Order $order, bool $paid): Order {
         $order->setPaid($paid);
         $this->_em->flush();
         return $order;
+    }
+
+    public function addProduct(Order $order, Product $product): Order {
+        $order->addProduct($product);
+        $this->_em->flush();
+        return $order;
+    }
+
+    public function removeProduct(Order $order, Product $product): Order {
+        $order->removeProduct($product);
+        $this->_em->flush();
+        return $order;
+    }
+
+    /**
+     * @return Order[] Returns an array of Order objects
+     */
+    public function findPaidUserOrders(User $user): array
+    {
+        return $this->createQueryBuilder('o')
+            ->andWhere('o.user = :user')
+            ->andWhere('o.paid = :paid')
+            ->setParameters(['user'=>$user, 'paid'=>true])
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    /**
+     * @return Order[] Returns an array of Order objects
+     */
+    public function findOrdersByDate(\DateTimeImmutable $fromDate, \DateTimeImmutable $toDate): array
+    {
+        $qb = $this->createQueryBuilder('o');
+
+        return $qb
+            ->andWhere($qb->expr()->between('o.createdAt', ':fromDate', ':toDate'))
+            ->setParameters(['fromDate'=>$fromDate, 'toDate'=>$toDate])
+            ->getQuery()
+            ->getResult()
+            ;
     }
 
     // /**
