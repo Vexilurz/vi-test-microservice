@@ -143,4 +143,22 @@ class Order
 
         return $this;
     }
+
+    public function getSerialized() {
+        $products = $this->getProducts();
+        $productsSerialized = [];
+        foreach ($products as $product) {
+            $productsSerialized[] = $product->getSerialized();
+        }
+
+        return [
+            'id' => $this->getId(),
+            'user' => $this->getUser()->getSerialized(),
+            'paid' => $this->getPaid(),
+            'totalPrice' => $this->getTotalPrice(),
+            'products' => $productsSerialized,
+            'createdAt' => $this->getCreatedAt()->getTimestamp(),
+            'updatedAt' => $this->getUpdatedAt()->getTimestamp()
+        ];
+    }
 }
