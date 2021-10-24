@@ -2,9 +2,6 @@
 
 namespace App\Controller;
 
-use App\Repository\OrderRepository;
-use App\Service\OrderProductAddService;
-use App\Service\OrderProductRemoveService;
 use App\Service\OrderService;
 use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,11 +16,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class OrderController extends AbstractController
 {
     private OrderService $orderService;
-    private UserService $userService;
 
-    public function __construct(OrderService $orderService,
-                                UserService $userService) {
-        $this->userService = $userService;
+    public function __construct(OrderService $orderService) {
         $this->orderService = $orderService;
     }
 
@@ -61,27 +55,27 @@ class OrderController extends AbstractController
     /**
      * @Route("/add_product", name="order_add_product", methods={"POST"})
      */
-    public function addProduct(Request $request, OrderProductAddService $service): Response
+    public function addProduct(Request $request): Response
     {
         try {
-            $message = $service->updateProduct($request);
+            $this->orderService->addProduct($request);
         } catch (HttpException $e) {
             return $this->json(['message'=>$e->getMessage()], $e->getStatusCode());
         }
-        return $this->json(['message'=>$message]);
+        return $this->json(['message'=>'product added to the order']);
     }
 
     /**
      * @Route("/remove_product", name="order_remove_product", methods={"POST"})
      */
-    public function removeProduct(Request $request, OrderProductRemoveService $service): Response
+    public function removeProduct(Request $request): Response
     {
         try {
-            $message = $service->updateProduct($request);
+            $this->orderService->removeProduct($request);
         } catch (HttpException $e) {
             return $this->json(['message'=>$e->getMessage()], $e->getStatusCode());
         }
-        return $this->json(['message'=>$message]);
+        return $this->json(['message'=>'product removed from the order']);
     }
 
     /**

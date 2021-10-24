@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use App\Entity\Order;
-use App\Entity\User;
 use App\Repository\OrderRepository;
 use App\Utils\Serializer;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,11 +13,15 @@ class OrderService
 {
     private OrderRepository $orderRepository;
     private UserService $userService;
+    private ProductService $productService;
 
     public function __construct(OrderRepository $orderRepository,
-                                UserService $userService) {
+                                UserService $userService,
+                                ProductService $productService
+    ) {
         $this->orderRepository = $orderRepository;
         $this->userService = $userService;
+        $this->productService = $productService;
     }
 
     public function getFromRequest(Request $request, $checkOwner = true): Order {
@@ -41,7 +44,7 @@ class OrderService
         return $this->orderRepository->create($user);
     }
 
-    public function delete(Request $request)
+    public function delete(Request $request): void
     {
         $order = $this->getFromRequest($request);
         $this->orderRepository->delete($order);
@@ -51,7 +54,7 @@ class OrderService
         return $this->orderRepository->setPaid($order, $paid);
     }
 
-    public function getSerializedOrders(Request $request)
+    public function getSerializedOrders(Request $request): array
     {
         $fromDate = $request->query->get('fromDate');
         $toDate = $request->query->get('toDate');
@@ -60,5 +63,20 @@ class OrderService
         $orders = $this->orderRepository->findOrdersByDate($fromDate, $toDate);
 
         return Serializer::getSerializedFromArray($orders, ['includeUser'=>true]);
+    }
+
+    public function removeProduct(Request $request): Order
+    {
+        $order = $this->getFromRequest($request);
+        $product = $this->productService->getFromRequest($request);
+        //TODO: check if product available in order?
+        return $this->orderRepository->removeProduct($order, $product);
+    }
+
+    public function addProduct(Request $request): Order
+    {
+        $order = $this->getFromRequest($request);
+        $product = $this->productService->getFromRequest($request);
+        return $this->orderRepository->addProduct($order, $product);
     }
 }
