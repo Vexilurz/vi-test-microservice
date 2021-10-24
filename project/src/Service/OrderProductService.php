@@ -4,6 +4,8 @@
 namespace App\Service;
 
 
+use App\Entity\Order;
+use App\Entity\Product;
 use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
@@ -12,17 +14,14 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class OrderService
+abstract class OrderProductService
 {
-    const PRODUCT_ADD = 'product_add';
-    const PRODUCT_REMOVE = 'product_remove';
-
     private OrderRepository $orderRepository;
     private ProductRepository $productRepository;
     private UserRepository $userRepository;
     private EntityManagerInterface $entityManager;
 
-    public function __constructor(OrderRepository $orderRepository,
+    public function __construct(OrderRepository $orderRepository,
                                   ProductRepository $productRepository,
                                   UserRepository $userRepository,
                                   EntityManagerInterface $entityManager) {
@@ -32,7 +31,7 @@ class OrderService
         $this->entityManager = $entityManager;
     }
 
-    public function updateProduct(Request $request, string $kind): Response {
+    public function updateProduct(Request $request): Response {
         $apiToken = $request->headers->get('X-AUTH-TOKEN');
         $userFromToken = $this->userRepository->findOneBy(['apiToken' => $apiToken]);
 
@@ -53,12 +52,13 @@ class OrderService
             );
         }
 
-        if ($kind === self::PRODUCT_ADD) {$order->addProduct($product);}
-        if ($kind === self::PRODUCT_REMOVE) {$order->removeProduct($product);}
+        $message = $this->orderProductAction($order, $product);
         $this->entityManager->flush();
 
         return new JsonResponse([
-            'message' => 'product added to order'
+            'message' => $message
         ]);
     }
+
+    abstract protected function orderProductAction(Order $order, Product $product): string;
 }

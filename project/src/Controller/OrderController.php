@@ -3,10 +3,9 @@
 namespace App\Controller;
 
 use App\Repository\OrderRepository;
-use App\Repository\ProductRepository;
 use App\Repository\UserRepository;
-use App\Service\OrderService;
-use Doctrine\ORM\EntityManagerInterface;
+use App\Service\OrderProductAddService;
+use App\Service\OrderProductRemoveService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,16 +35,16 @@ class OrderController extends AbstractController
     /**
      * @Route("/add_product", name="order_add_product", methods={"POST"})
      */
-    public function addProduct(Request $request, OrderService $orderService): Response
+    public function addProduct(Request $request, OrderProductAddService $orderService): Response
     {
-        return $orderService->updateProduct($request, OrderService::PRODUCT_ADD);
+        return $orderService->updateProduct($request);
     }
 
     /**
      * @Route("/remove_product", name="order_remove_product", methods={"POST"})
      */
-    public function removeProduct(Request $request, OrderService $orderService): Response
+    public function removeProduct(Request $request, OrderProductRemoveService $orderService): Response
     {
-        return $orderService->updateProduct($request, OrderService::PRODUCT_REMOVE);
+        return $orderService->updateProduct($request);
     }
 }
