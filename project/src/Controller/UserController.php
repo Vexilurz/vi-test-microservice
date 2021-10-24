@@ -30,22 +30,30 @@ class UserController extends AbstractController
     public function getOrders(Request $request): Response
     {
         $user = $this->userRepository->getFromRequest($request);
-        $orders = $this->userRepository->getOrdersSerialized($user->getOrders());
 
-        return $this->json($orders);
+        $onlyPaid = $request->query->get('paid');
+        $orders = $onlyPaid ? $this->orderRepository->findPaidUserOrders($user) : $user->getOrders();
+
+        $ordersSerialized = $this->userRepository->getOrdersSerialized($orders);
+
+        return $this->json($ordersSerialized);
     }
 
     /**
      * @Route("/get_orders/{userId}", name="user_get_orders_by_userid", methods={"GET"})
      */
-    public function getOrdersByUserId($userId): Response
+    public function getOrdersByUserId(Request $request, $userId): Response
     {
         $user = $this->userRepository->find($userId);
         if (!$user) {
             throw new NotFoundHttpException('user not found');
         }
-        $orders = $this->userRepository->getOrdersSerialized($user->getOrders());
 
-        return $this->json($orders);
+        $onlyPaid = $request->query->get('paid');
+        $orders = $onlyPaid ? $this->orderRepository->findPaidUserOrders($user) : $user->getOrders();
+
+        $ordersSerialized = $this->userRepository->getOrdersSerialized($orders);
+
+        return $this->json($ordersSerialized);
     }
 }

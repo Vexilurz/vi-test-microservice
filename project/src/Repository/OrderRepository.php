@@ -58,6 +58,21 @@ class OrderRepository extends ServiceEntityRepository
         return $order;
     }
 
+    /**
+     * @return Order[] Returns an array of Order objects
+     */
+    public function findPaidUserOrders(User $user)
+    {
+        return $this->createQueryBuilder('o')
+            ->andWhere('o.user = :user')
+            ->setParameter('user', $user)
+            ->andWhere('o.paid = :paid')
+            ->setParameter('paid', true)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
     // /**
     //  * @return Order[] Returns an array of Order objects
     //  */
