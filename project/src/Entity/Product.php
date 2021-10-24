@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ProductRepository;
+use App\Utils\ISerialized;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -10,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
  */
-class Product
+class Product implements ISerialized
 {
     /**
      * @ORM\Id
@@ -146,7 +147,7 @@ class Product
         return $this;
     }
 
-    public function getSerialized(): array
+    public function getSerialized(array $options = []): array
     {
         return [
             'id' => $this->getId(),

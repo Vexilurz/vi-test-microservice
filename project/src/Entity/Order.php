@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\OrderRepository;
+use App\Utils\ISerialized;
 use App\Utils\Serializer;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -12,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass=OrderRepository::class)
  * @ORM\Table(name="`order`")
  */
-class Order
+class Order implements ISerialized
 {
     /**
      * @ORM\Id
@@ -145,7 +146,7 @@ class Order
         return $this;
     }
 
-    public function getSerialized($includeUser = false): array
+    public function getSerialized(array $options = []): array
     {
         $products = $this->getProducts();
         $productsSerialized = Serializer::getSerializedFromArray($products);
@@ -157,7 +158,7 @@ class Order
             'createdAt' => $this->getCreatedAt()->getTimestamp(),
             'updatedAt' => $this->getUpdatedAt()->getTimestamp()
         ];
-        if ($includeUser) {
+        if ($options['includeUser']) {
             $result['user'] = $this->getUser()->getSerialized();
         }
 
