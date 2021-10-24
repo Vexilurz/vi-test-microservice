@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\OrderRepository;
+use App\Utils\Serializer;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -144,12 +145,10 @@ class Order
         return $this;
     }
 
-    public function getSerialized($includeUser = false) {
+    public function getSerialized($includeUser = false): array
+    {
         $products = $this->getProducts();
-        $productsSerialized = [];
-        foreach ($products as $product) {
-            $productsSerialized[] = $product->getSerialized();
-        }
+        $productsSerialized = Serializer::getSerializedFromArray($products);
         $result = [
             'id' => $this->getId(),
             'paid' => $this->getPaid(),

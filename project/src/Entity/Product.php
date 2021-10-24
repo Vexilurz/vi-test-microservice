@@ -146,7 +146,8 @@ class Product
         return $this;
     }
 
-    public function getSerialized() {
+    public function getSerialized(): array
+    {
         return [
             'id' => $this->getId(),
             'name' => $this->getName(),

@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Product;
 use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
+use App\Utils\Serializer;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -48,10 +49,6 @@ class ProductService
             throw new NotFoundHttpException('order not found');
         }
         $products = $this->productRepository->findAvailableInOrder($order);
-        $productsSerialized = [];
-        foreach ($products as $product) {
-            $productsSerialized[] = $product->getSerialized();
-        }
-        return $productsSerialized;
+        return Serializer::getSerializedFromArray($products);
     }
 }

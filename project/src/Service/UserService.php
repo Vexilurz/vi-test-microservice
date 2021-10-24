@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\User;
 use App\Repository\OrderRepository;
 use App\Repository\UserRepository;
+use App\Utils\Serializer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -45,10 +46,6 @@ class UserService
         $onlyPaid = $request->query->get('paid');
         $orders = $onlyPaid ? $this->orderRepository->findPaidUserOrders($user) : $user->getOrders();
 
-        $ordersSerialized = [];
-        foreach ($orders as $order) {
-            $ordersSerialized[] = $order->getSerialized();
-        }
-        return $ordersSerialized;
+        return Serializer::getSerializedFromArray($orders);
     }
 }
