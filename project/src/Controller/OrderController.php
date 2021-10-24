@@ -32,8 +32,7 @@ class OrderController extends AbstractController
      */
     public function create(Request $request): Response
     {
-        $user = $this->userService->getFromRequest($request);
-        $order = $this->orderService->create($user);
+        $order = $this->orderService->create($request);
 
         return $this->json([
             'message' => 'new order created',
@@ -73,9 +72,7 @@ class OrderController extends AbstractController
     public function pay(Request $request): Response
     {
         try {
-            $userFromRequest = $this->userService->getFromRequest($request);
             $order = $this->orderService->getFromRequest($request);
-            $this->orderService->checkOrderBelongsToUser($order, $userFromRequest);
         }
         catch (HttpException $e) {
             return $this->json(['message' => $e->getMessage()], $e->getStatusCode());

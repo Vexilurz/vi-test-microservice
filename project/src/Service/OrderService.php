@@ -13,28 +13,31 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 class OrderService
 {
     private OrderRepository $orderRepository;
+    private UserService $userService;
 
-    public function __construct(OrderRepository $orderRepository) {
+    public function __construct(OrderRepository $orderRepository,
+                                UserService $userService) {
         $this->orderRepository = $orderRepository;
+        $this->userService = $userService;
     }
 
-    public function getFromRequest(Request $request): Order {
+    public function getFromRequest(Request $request, $checkOwner = true): Order {
         $orderId = $request->request->get('orderId', 0);
         $order = $this->orderRepository->find($orderId);
         if (!$order) {
             throw new NotFoundHttpException('order not found');
         }
+        if ($checkOwner) {
+            $userFromRequest = $this->userService->getFromRequest($request);
+            if ($order->getUser() !== $userFromRequest) {
+                throw new AccessDeniedHttpException('user is not the owner of the order');
+            }
+        }
         return $order;
     }
 
-    public function checkOrderBelongsToUser(Order $order, User $user): bool {
-        if ($order->getUser() !== $user) {
-            throw new AccessDeniedHttpException('user is not the owner of the order');
-        }
-        return true;
-    }
-
-    public function create(User $user): Order {
+    public function create(Request $request): Order {
+        $user = $this->userService->getFromRequest($request);
         return $this->orderRepository->create($user);
     }
 

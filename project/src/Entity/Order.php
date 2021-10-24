@@ -157,7 +157,7 @@ class Order
             'createdAt' => $this->getCreatedAt()->getTimestamp(),
             'updatedAt' => $this->getUpdatedAt()->getTimestamp()
         ];
-        if ($options['includeUser']) {
+        if (array_key_exists('includeUser', $options) && $options['includeUser']) {
             $result['user'] = $this->getUser()->getSerialized();
         }
 
