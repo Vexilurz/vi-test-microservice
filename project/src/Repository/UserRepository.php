@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
@@ -41,6 +42,16 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
+    public function getUserFromRequest(Request $request): User
+    {
+        $apiToken = $request->headers->get('X-AUTH-TOKEN');
+        $user = $this->findOneBy(['apiToken' => $apiToken]);
+        if (null === $user) {
+            throw new UserNotFoundException();
+        }
+        return $user;
+    }
+
     private function getNewApiToken(): string {
         return md5(microtime());
     }
@@ -65,11 +76,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $user;
     }
 
-    public function logout(string $apiToken): User {
-        $user = $this->findOneBy(['apiToken' => $apiToken]);
-        if (null === $user) {
-            throw new UserNotFoundException();
-        }
+    public function logout(Request $request): User {
+        $user = $this->getUserFromRequest($request);
         $user->setApiToken(null);
         $this->_em->flush();
         return $user;

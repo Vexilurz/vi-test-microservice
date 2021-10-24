@@ -32,8 +32,7 @@ abstract class OrderProductService
     }
 
     public function updateProduct(Request $request): Response {
-        $apiToken = $request->headers->get('X-AUTH-TOKEN');
-        $userFromToken = $this->userRepository->findOneBy(['apiToken' => $apiToken]);
+        $userFromRequest = $this->userRepository->getUserFromRequest($request);
 
         $orderId = $request->request->get('orderId', 0);
         $productId = $request->request->get('productId', 0);
@@ -45,7 +44,7 @@ abstract class OrderProductService
                 Response::HTTP_BAD_REQUEST);
         }
 
-        if ($order->getUser() !== $userFromToken) {
+        if ($order->getUser() !== $userFromRequest) {
             return new JsonResponse(
                 ['message'=>'user from apiToken are not the owner of that order'],
                 Response::HTTP_FORBIDDEN

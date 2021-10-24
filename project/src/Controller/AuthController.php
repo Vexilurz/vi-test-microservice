@@ -66,8 +66,7 @@ class AuthController extends AbstractController
      */
     public function logout(Request $request): Response
     {
-        $apiToken = $request->headers->get('X-AUTH-TOKEN');
-        $user = $this->userRepository->logout($apiToken);
+        $user = $this->userRepository->logout($request);
 
         return $this->json([
             'message' => 'logout success'

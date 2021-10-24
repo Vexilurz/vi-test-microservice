@@ -22,8 +22,7 @@ class OrderController extends AbstractController
     public function create(Request $request, OrderRepository $orderRepository,
                            UserRepository $userRepository): Response
     {
-        $apiToken = $request->headers->get('X-AUTH-TOKEN');
-        $user = $userRepository->findOneBy(['apiToken' => $apiToken]);
+        $user = $userRepository->getUserFromRequest($request);
         $order = $orderRepository->create($user);
 
         return $this->json([
