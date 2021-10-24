@@ -37,6 +37,7 @@ class OrderRepository extends ServiceEntityRepository
 
     public function setPaid(Order $order, bool $paid): Order {
         $order->setPaid($paid);
+        $order->setUpdatedAt(new \DateTimeImmutable('now'));
         $this->_em->flush();
         return $order;
     }
