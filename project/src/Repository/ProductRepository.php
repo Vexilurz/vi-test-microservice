@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Order;
 use App\Entity\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -30,6 +31,19 @@ class ProductRepository extends ServiceEntityRepository
         $this->_em->persist($newProduct);
         $this->_em->flush();
         return $newProduct;
+    }
+
+    /**
+     * @return Product[] Returns an array of Product objects
+     */
+    public function findAvailableInOrder(Order $order): array
+    {
+        return $this->createQueryBuilder('p')
+            ->innerJoin('p.orders', 'o', 'WITH', 'o = :order')
+            ->andWhere('p.available = :available')
+            ->setParameters(['order'=>$order, 'available'=>true])
+            ->getQuery()
+            ->getResult();
     }
 
     // /**

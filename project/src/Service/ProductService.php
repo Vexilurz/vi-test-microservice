@@ -40,4 +40,18 @@ class ProductService
         }
         return $product;
     }
+
+    public function getSerializedProductsFromOrder(Request $request, $orderId): array
+    {
+        $order = $this->orderRepository->find($orderId);
+        if (!$order) {
+            throw new NotFoundHttpException('order not found');
+        }
+        $products = $this->productRepository->findAvailableInOrder($order);
+        $productsSerialized = [];
+        foreach ($products as $product) {
+            $productsSerialized[] = $product->getSerialized();
+        }
+        return $productsSerialized;
+    }
 }

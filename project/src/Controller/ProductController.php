@@ -33,5 +33,17 @@ class ProductController extends AbstractController
         ]);
     }
 
+    /**
+     * @Route("/available_in_order/{orderId}", name="product_available_in_order", methods={"GET"})
+     */
+    public function availableInOrder(Request $request, $orderId): Response
+    {
+        try {
+            $productsSerialized = $this->service->getSerializedProductsFromOrder($request, $orderId);
+        } catch(HttpException $e) {
+            return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
+        }
 
+        return $this->json($productsSerialized);
+    }
 }
