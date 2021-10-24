@@ -88,4 +88,19 @@ class OrderController extends AbstractController
             'id' => $order->getId()
         ]);
     }
+
+    /**
+     * @Route("/get", name="orders_get", methods={"GET"})
+     */
+    public function getOrders(Request $request): Response
+    {
+        try {
+            $ordersSerialized = $this->orderService->getSerializedOrders($request);
+        } catch (HttpException $e) {
+            return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
+        } catch (\Exception $e) {
+            return $this->json(['message' => $e->getMessage()], RESPONSE::HTTP_BAD_REQUEST);
+        }
+        return $this->json($ordersSerialized);
+    }
 }

@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\OrderRepository;
-use App\Utils\ISerialized;
 use App\Utils\Serializer;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -13,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass=OrderRepository::class)
  * @ORM\Table(name="`order`")
  */
-class Order implements ISerialized
+class Order
 {
     /**
      * @ORM\Id

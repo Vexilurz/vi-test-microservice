@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Entity\Order;
 use App\Entity\User;
 use App\Repository\OrderRepository;
+use App\Utils\Serializer;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -39,5 +40,16 @@ class OrderService
 
     public function setPaid(Order $order, bool $paid): Order {
         return $this->orderRepository->setPaid($order, $paid);
+    }
+
+    public function getSerializedOrders(Request $request)
+    {
+        $fromDate = $request->query->get('fromDate');
+        $toDate = $request->query->get('toDate');
+        $fromDate = $fromDate ? new \DateTimeImmutable($fromDate) : (new \DateTimeImmutable())->setTimestamp(0);
+        $toDate = $toDate ? new \DateTimeImmutable($toDate) : (new \DateTimeImmutable('now'));
+        $orders = $this->orderRepository->findOrdersByDate($fromDate, $toDate);
+
+        return Serializer::getSerializedFromArray($orders, ['includeUser'=>true]);
     }
 }

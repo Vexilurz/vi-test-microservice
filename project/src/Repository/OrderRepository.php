@@ -7,6 +7,7 @@ use App\Entity\Product;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use function Doctrine\ORM\QueryBuilder;
 
 /**
  * @method Order|null find($id, $lockMode = null, $lockVersion = null)
@@ -64,6 +65,21 @@ class OrderRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    /**
+     * @return Order[] Returns an array of Order objects
+     */
+    public function findOrdersByDate(\DateTimeImmutable $fromDate, \DateTimeImmutable $toDate): array
+    {
+        $qb = $this->createQueryBuilder('o');
+
+        return $qb
+            ->andWhere($qb->expr()->between('o.createdAt', ':fromDate', ':toDate'))
+            ->setParameters(['fromDate'=>$fromDate, 'toDate'=>$toDate])
+            ->getQuery()
+            ->getResult()
+            ;
     }
 
     // /**

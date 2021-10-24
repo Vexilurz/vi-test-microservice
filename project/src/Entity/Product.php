@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\ProductRepository;
-use App\Utils\ISerialized;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -11,7 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
  */
-class Product implements ISerialized
+class Product
 {
     /**
      * @ORM\Id
