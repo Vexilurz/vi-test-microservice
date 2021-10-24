@@ -35,20 +35,29 @@ class OrderRepository extends ServiceEntityRepository
         return $newOrder;
     }
 
+    public function delete(Order $order) {
+        $this->_em->remove($order);
+        $this->_em->flush();
+    }
+
     public function setPaid(Order $order, bool $paid): Order {
         $order->setPaid($paid);
+        $order->setUpdatedAt(new \DateTimeImmutable('now'));
         $this->_em->flush();
         return $order;
     }
 
     public function addProduct(Order $order, Product $product): Order {
         $order->addProduct($product);
+        $order->setTotalPrice($order->getTotalPrice() + $product->getPrice());
         $this->_em->flush();
         return $order;
     }
 
     public function removeProduct(Order $order, Product $product): Order {
         $order->removeProduct($product);
+        //TODO: ask about totalPrice: what to do when price of the product changed?
+        $order->setTotalPrice($order->getTotalPrice() - $product->getPrice());
         $this->_em->flush();
         return $order;
     }

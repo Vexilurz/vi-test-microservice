@@ -2,9 +2,6 @@
 
 namespace App\Controller;
 
-use App\Repository\OrderRepository;
-use App\Service\OrderProductAddService;
-use App\Service\OrderProductRemoveService;
 use App\Service\OrderService;
 use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,11 +16,8 @@ use Symfony\Component\Routing\Annotation\Route;
 class OrderController extends AbstractController
 {
     private OrderService $orderService;
-    private UserService $userService;
 
-    public function __construct(OrderService $orderService,
-                                UserService $userService) {
-        $this->userService = $userService;
+    public function __construct(OrderService $orderService) {
         $this->orderService = $orderService;
     }
 
@@ -32,8 +26,7 @@ class OrderController extends AbstractController
      */
     public function create(Request $request): Response
     {
-        $user = $this->userService->getFromRequest($request);
-        $order = $this->orderService->create($user);
+        $order = $this->orderService->create($request);
 
         return $this->json([
             'message' => 'new order created',
@@ -42,29 +35,47 @@ class OrderController extends AbstractController
     }
 
     /**
-     * @Route("/add_product", name="order_add_product", methods={"POST"})
+     * @Route("/delete", name="order_delete", methods={"POST"})
      */
-    public function addProduct(Request $request, OrderProductAddService $service): Response
+    public function delete(Request $request): Response
     {
         try {
-            $message = $service->updateProduct($request);
+            $this->orderService->delete($request);
+        } catch (HttpException $e) {
+            return $this->json(['message'=>$e->getMessage()], $e->getStatusCode());
+        } catch (\Exception $e) {
+            return $this->json(['message'=>$e->getMessage()], RESPONSE::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return $this->json([
+            'message' => 'order deleted'
+        ]);
+    }
+
+    /**
+     * @Route("/add_product", name="order_add_product", methods={"POST"})
+     */
+    public function addProduct(Request $request): Response
+    {
+        try {
+            $this->orderService->addProduct($request);
         } catch (HttpException $e) {
             return $this->json(['message'=>$e->getMessage()], $e->getStatusCode());
         }
-        return $this->json(['message'=>$message]);
+        return $this->json(['message'=>'product added to the order']);
     }
 
     /**
      * @Route("/remove_product", name="order_remove_product", methods={"POST"})
      */
-    public function removeProduct(Request $request, OrderProductRemoveService $service): Response
+    public function removeProduct(Request $request): Response
     {
         try {
-            $message = $service->updateProduct($request);
+            $this->orderService->removeProduct($request);
         } catch (HttpException $e) {
             return $this->json(['message'=>$e->getMessage()], $e->getStatusCode());
         }
-        return $this->json(['message'=>$message]);
+        return $this->json(['message'=>'product removed from the order']);
     }
 
     /**
@@ -73,9 +84,7 @@ class OrderController extends AbstractController
     public function pay(Request $request): Response
     {
         try {
-            $userFromRequest = $this->userService->getFromRequest($request);
             $order = $this->orderService->getFromRequest($request);
-            $this->orderService->checkOrderBelongsToUser($order, $userFromRequest);
         }
         catch (HttpException $e) {
             return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
