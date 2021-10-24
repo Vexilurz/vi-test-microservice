@@ -7,43 +7,33 @@ namespace App\Service;
 use App\Entity\Order;
 use App\Entity\Product;
 use App\Repository\OrderRepository;
-use App\Repository\ProductRepository;
-use App\Repository\UserRepository;
-use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 abstract class OrderProductService
 {
-    private OrderRepository $orderRepository;
-    private ProductRepository $productRepository;
-    private UserRepository $userRepository;
-    private EntityManagerInterface $entityManager;
+    private OrderService $orderService;
+    private ProductService $productService;
+    private UserService $userService;
+    protected OrderRepository $orderRepository;
 
-    public function __construct(OrderRepository $orderRepository,
-                                  ProductRepository $productRepository,
-                                  UserRepository $userRepository,
-                                  EntityManagerInterface $entityManager) {
+    public function __construct(OrderService $orderService,
+                                ProductService $productService,
+                                 UserService $userService,
+                                OrderRepository $orderRepository) {
+        $this->orderService = $orderService;
+        $this->productService = $productService;
+        $this->userService = $userService;
         $this->orderRepository = $orderRepository;
-        $this->productRepository = $productRepository;
-        $this->userRepository = $userRepository;
-        $this->entityManager = $entityManager;
     }
 
-    public function updateProduct(Request $request): Response {
-        $userFromRequest = $this->userRepository->getFromRequest($request);
-        $order = $this->orderRepository->getFromRequest($request);
-        $product = $this->productRepository->getFromRequest($request);
+    public function updateProduct(Request $request): string {
+        $userFromRequest = $this->userService->getFromRequest($request);
+        $order = $this->orderService->getFromRequest($request);
+        $product = $this->productService->getFromRequest($request);
 
-        $this->orderRepository->checkOrderBelongsToUser($order, $userFromRequest);
+        $this->orderService->checkOrderBelongsToUser($order, $userFromRequest);
 
-        $message = $this->orderProductAction($order, $product);
-        $this->entityManager->flush();
-
-        return new JsonResponse([
-            'message' => $message
-        ]);
+        return $this->orderProductAction($order, $product);
     }
 
     abstract protected function orderProductAction(Order $order, Product $product): string;

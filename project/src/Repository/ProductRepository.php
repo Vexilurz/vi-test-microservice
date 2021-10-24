@@ -5,8 +5,6 @@ namespace App\Repository;
 use App\Entity\Product;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @method Product|null find($id, $lockMode = null, $lockVersion = null)
@@ -32,15 +30,6 @@ class ProductRepository extends ServiceEntityRepository
         $this->_em->persist($newProduct);
         $this->_em->flush();
         return $newProduct;
-    }
-
-    public function getFromRequest(Request $request): Product {
-        $productId = $request->request->get('productId', 0);
-        $product = $this->find($productId);
-        if (!$product) {
-            throw new NotFoundHttpException('product not found');
-        }
-        return $product;
     }
 
     // /**

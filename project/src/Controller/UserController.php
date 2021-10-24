@@ -2,12 +2,11 @@
 
 namespace App\Controller;
 
-use App\Repository\OrderRepository;
-use App\Repository\UserRepository;
+use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -15,13 +14,10 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class UserController extends AbstractController
 {
-    private OrderRepository $orderRepository;
-    private UserRepository $userRepository;
+    private UserService $userService;
 
-    public function __construct(OrderRepository $orderRepository,
-                                UserRepository $userRepository) {
-        $this->userRepository = $userRepository;
-        $this->orderRepository = $orderRepository;
+    public function __construct(UserService $userService) {
+        $this->userService = $userService;
     }
 
     /**
@@ -29,13 +25,11 @@ class UserController extends AbstractController
      */
     public function getOrders(Request $request): Response
     {
-        $user = $this->userRepository->getFromRequest($request);
-
-        $onlyPaid = $request->query->get('paid');
-        $orders = $onlyPaid ? $this->orderRepository->findPaidUserOrders($user) : $user->getOrders();
-
-        $ordersSerialized = $this->userRepository->getOrdersSerialized($orders);
-
+        try {
+            $ordersSerialized = $this->userService->getSerializedOrders($request);
+        } catch (HttpException $e) {
+            return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
+        }
         return $this->json($ordersSerialized);
     }
 
@@ -44,16 +38,11 @@ class UserController extends AbstractController
      */
     public function getOrdersByUserId(Request $request, $userId): Response
     {
-        $user = $this->userRepository->find($userId);
-        if (!$user) {
-            throw new NotFoundHttpException('user not found');
+        try {
+            $ordersSerialized = $this->userService->getSerializedOrders($request, $userId);
+        } catch (HttpException $e) {
+            return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
         }
-
-        $onlyPaid = $request->query->get('paid');
-        $orders = $onlyPaid ? $this->orderRepository->findPaidUserOrders($user) : $user->getOrders();
-
-        $ordersSerialized = $this->userRepository->getOrdersSerialized($orders);
-
         return $this->json($ordersSerialized);
     }
 }
