@@ -41,6 +41,24 @@ class OrderController extends AbstractController
     }
 
     /**
+     * @Route("/delete", name="order_delete", methods={"POST"})
+     */
+    public function delete(Request $request): Response
+    {
+        try {
+            $this->orderService->delete($request);
+        } catch (HttpException $e) {
+            return $this->json(['message'=>$e->getMessage()], $e->getStatusCode());
+        } catch (\Exception $e) {
+            return $this->json(['message'=>$e->getMessage()], RESPONSE::HTTP_INTERNAL_SERVER_ERROR);
+        }
+
+        return $this->json([
+            'message' => 'order deleted'
+        ]);
+    }
+
+    /**
      * @Route("/add_product", name="order_add_product", methods={"POST"})
      */
     public function addProduct(Request $request, OrderProductAddService $service): Response

@@ -41,6 +41,12 @@ class OrderService
         return $this->orderRepository->create($user);
     }
 
+    public function delete(Request $request)
+    {
+        $order = $this->getFromRequest($request);
+        $this->orderRepository->delete($order);
+    }
+
     public function setPaid(Order $order, bool $paid): Order {
         return $this->orderRepository->setPaid($order, $paid);
     }
