@@ -42,7 +42,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
-    public function getUserFromRequest(Request $request): User
+    public function getFromRequest(Request $request): User
     {
         $apiToken = $request->headers->get('X-AUTH-TOKEN');
         $user = $this->findOneBy(['apiToken' => $apiToken]);
@@ -77,7 +77,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     }
 
     public function logout(Request $request): User {
-        $user = $this->getUserFromRequest($request);
+        $user = $this->getFromRequest($request);
         $user->setApiToken(null);
         $this->_em->flush();
         return $user;

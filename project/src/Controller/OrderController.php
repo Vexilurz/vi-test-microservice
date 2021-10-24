@@ -6,9 +6,7 @@ use App\Repository\OrderRepository;
 use App\Repository\UserRepository;
 use App\Service\OrderProductAddService;
 use App\Service\OrderProductRemoveService;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -32,7 +30,7 @@ class OrderController extends AbstractController
      */
     public function create(Request $request): Response
     {
-        $user = $this->userRepository->getUserFromRequest($request);
+        $user = $this->userRepository->getFromRequest($request);
         $order = $this->orderRepository->create($user);
 
         return $this->json([
@@ -44,42 +42,30 @@ class OrderController extends AbstractController
     /**
      * @Route("/add_product", name="order_add_product", methods={"POST"})
      */
-    public function addProduct(Request $request, OrderProductAddService $orderService): Response
+    public function addProduct(Request $request, OrderProductAddService $service): Response
     {
-        return $orderService->updateProduct($request);
+        return $service->updateProduct($request);
     }
 
     /**
      * @Route("/remove_product", name="order_remove_product", methods={"POST"})
      */
-    public function removeProduct(Request $request, OrderProductRemoveService $orderService): Response
+    public function removeProduct(Request $request, OrderProductRemoveService $service): Response
     {
-        return $orderService->updateProduct($request);
+        return $service->updateProduct($request);
     }
 
     /**
      * @Route("/pay", name="order_pay", methods={"POST"})
      */
-    public function pay(Request $request, EntityManagerInterface $entityManager): Response
+    public function pay(Request $request): Response
     {
-        $orderId = $request->request->get('orderId', 0);
-        $order = $this->orderRepository->find($orderId);
-        $userFromRequest = $this->userRepository->getUserFromRequest($request);
+        $order = $this->orderRepository->getFromRequest($request);
+        $userFromRequest = $this->userRepository->getFromRequest($request);
 
-        if (!$order) {
-            return new JsonResponse(['message'=>'order not found'],
-                Response::HTTP_BAD_REQUEST);
-        }
+        $this->orderRepository->checkOrderBelongsToUser($order, $userFromRequest);
 
-        if ($order->getUser() !== $userFromRequest) {
-            return new JsonResponse(
-                ['message'=>'user from apiToken are not the owner of that order'],
-                Response::HTTP_FORBIDDEN
-            );
-        }
-
-        $order->setPaid(true);
-        $entityManager->flush();
+        $this->orderRepository->setPaid($order, true);
 
         return $this->json([
             'message' => 'order has been paid',

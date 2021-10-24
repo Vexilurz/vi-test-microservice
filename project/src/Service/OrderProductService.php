@@ -32,24 +32,11 @@ abstract class OrderProductService
     }
 
     public function updateProduct(Request $request): Response {
-        $userFromRequest = $this->userRepository->getUserFromRequest($request);
+        $userFromRequest = $this->userRepository->getFromRequest($request);
+        $order = $this->orderRepository->getFromRequest($request);
+        $product = $this->productRepository->getFromRequest($request);
 
-        $orderId = $request->request->get('orderId', 0);
-        $productId = $request->request->get('productId', 0);
-        $order = $this->orderRepository->find($orderId);
-        $product = $this->productRepository->find($productId);
-
-        if (!$order || !$product) {
-            return new JsonResponse(['message'=>'order or product not found'],
-                Response::HTTP_BAD_REQUEST);
-        }
-
-        if ($order->getUser() !== $userFromRequest) {
-            return new JsonResponse(
-                ['message'=>'user from apiToken are not the owner of that order'],
-                Response::HTTP_FORBIDDEN
-            );
-        }
+        $this->orderRepository->checkOrderBelongsToUser($order, $userFromRequest);
 
         $message = $this->orderProductAction($order, $product);
         $this->entityManager->flush();

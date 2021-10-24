@@ -6,6 +6,9 @@ use App\Entity\Order;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * @method Order|null find($id, $lockMode = null, $lockVersion = null)
@@ -20,6 +23,15 @@ class OrderRepository extends ServiceEntityRepository
         parent::__construct($registry, Order::class);
     }
 
+    public function getFromRequest(Request $request): Order {
+        $orderId = $request->request->get('orderId', 0);
+        $order = $this->find($orderId);
+        if (!$order) {
+            throw new NotFoundHttpException('order not found');
+        }
+        return $order;
+    }
+
     public function create(User $user): Order {
         $newOrder = new Order();
         $newOrder->setUser($user);
@@ -31,6 +43,19 @@ class OrderRepository extends ServiceEntityRepository
         $this->_em->persist($newOrder);
         $this->_em->flush();
         return $newOrder;
+    }
+
+    public function checkOrderBelongsToUser(Order $order, User $user): bool {
+        if ($order->getUser() !== $user) {
+            throw new AccessDeniedHttpException('user is not the owner of the order');
+        }
+        return true;
+    }
+
+    public function setPaid(Order $order, bool $paid): Order {
+        $order->setPaid($paid);
+        $this->_em->flush();
+        return $order;
     }
 
     // /**
