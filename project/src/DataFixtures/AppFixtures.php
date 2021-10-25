@@ -37,11 +37,6 @@ class AppFixtures extends Fixture
                 'email' => 'test@example.com',
                 'password' => 111111,
                 'apiToken' => 'test_token',
-            ],
-            [
-                'email' => 'logout@example.com',
-                'password' => 111111,
-                'apiToken' => 'logout_token',
             ]
         ];
         foreach ($usersData as $user) {

@@ -151,6 +151,7 @@
       <path value="$PROJECT_DIR$/project/vendor/symfony/serializer" />
       <path value="$PROJECT_DIR$/project/vendor/symfony/expression-language" />
       <path value="$PROJECT_DIR$/project/vendor/symfony/validator" />
+      <path value="$PROJECT_DIR$/project/vendor/bin/.phpunit" />
     </include_path>
   </component>
   <component name="PhpInterpreters">

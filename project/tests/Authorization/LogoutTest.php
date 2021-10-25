@@ -2,41 +2,36 @@
 
 namespace App\Tests\Authorization;
 
-use App\Tests\Utils\TestUtils;
 use App\Tests\VitmWebTestCase;
 
 class LogoutTest extends VitmWebTestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->setMethod('POST');
+        $this->setUrl('/logout');
+    }
+
     public function testLogout(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/logout', [], [], [
-            'HTTP_X-AUTH-TOKEN'=>'logout_token'
-        ]);
+        $this->setUrl('/login');
+        $this->setBody(['email'=>'user@example.com','password'=>'123456']);
+        $this->checkResponseWithMessage('login success', true);
 
-        self::assertResponseIsSuccessful();
-        $response = $client->getResponse();
-        $responseData = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        self::assertArrayHasKey('message', $responseData);
-        self::assertSame('logout success', $responseData['message']);
-        self::assertArrayNotHasKey('apiToken', $responseData);
+        $this->setUrl('/logout');
+        $this->setApiToken($this->getResponseJson()['apiToken']);
+        $this->checkResponseWithMessage('logout success', );
     }
 
     public function testLogoutWithBadToken(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/logout', [], [], [
-            'HTTP_X-AUTH-TOKEN'=>TestUtils::getRandomStr()
-        ]);
-
-        $this->checkUnauthorized($client);
+        $this->setApiToken('bad_token');
+        $this->checkUnauthorized();
     }
 
     public function testLogoutWithoutToken(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/logout');
-
-        $this->checkUnauthorized($client, 'No API token provided');
+        $this->checkUnauthorized('No API token provided');
     }
 }

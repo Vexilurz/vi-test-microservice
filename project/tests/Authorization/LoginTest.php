@@ -2,49 +2,57 @@
 
 namespace App\Tests\Authorization;
 
-use App\Tests\Utils\TestUtils;
 use App\Tests\VitmWebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 class LoginTest extends VitmWebTestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+        $this->setMethod('POST');
+        $this->setUrl('/login');
+    }
+
     public function testLogin(): void
     {
-        $this->checkRequest('POST', '/login', ['email'=>'user@example.com','password'=>'123456'],
-        Response::HTTP_OK, 'login success', true);
+        $this->setBody(['email'=>'user@example.com','password'=>'123456']);
+        $this->checkResponseWithMessage('login success', true);
     }
 
     public function testLoginNonExistentEmail(): void
     {
-        $this->checkUnauthorized('POST', '/login',
-            ['email'=>TestUtils::getRandomStr().'@example.com','password'=>'123456']);
+        $this->setBody(['email'=>'non-exixtent@example.com','password'=>'123456']);
+        $this->checkUnauthorized();
     }
 
     public function testLoginWithoutEmail(): void
     {
-        $this->checkUnauthorized('POST', '/login',
-            ['password'=>'123456']);
+        $this->setBody(['password'=>'123456']);
+        $this->checkUnauthorized();
     }
 
     public function testLoginWithoutPassword(): void
     {
-        $this->checkUnauthorized('POST', '/login',
-            ['email'=>'user@example.com']);
+        $this->setBody(['email'=>'user@example.com']);
+        $this->checkUnauthorized();
     }
 
     public function testLoginWithIncorrectPassword(): void
     {
-        $this->checkUnauthorized('POST', '/login',
-            ['email'=>'user@example.com','password'=>'my_incorrect_password']);
+        $this->setBody(['email'=>'user@example.com','password'=>'my_incorrect_password']);
+        $this->checkUnauthorized();
     }
 
     public function testLoginWithoutUserInformation(): void
     {
-        $this->checkUnauthorized('POST', '/login');
+        $this->checkUnauthorized();
     }
 
     public function testLoginWithNotPostMethod(): void
     {
-        $this->checkRequest('GET', '/login', [], Response::HTTP_METHOD_NOT_ALLOWED);
+        $this->setMethod('GET');
+        $this->setResponseCode(Response::HTTP_METHOD_NOT_ALLOWED);
+        $this->checkResponse(false);
     }
 }
