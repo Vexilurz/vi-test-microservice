@@ -25,15 +25,18 @@ class AppFixtures extends Fixture
         $usersData = [
             [
                 'email' => 'user@example.com',
-                'password' => 123456
+                'password' => 123456,
+                'apiToken' => null,
             ],
             [
                 'email' => 'user2@example.com',
-                'password' => 111111
+                'password' => 111111,
+                'apiToken' => null,
             ],
             [
-                'email' => 'user3@example.com',
-                'password' => 222222
+                'email' => 'test@example.com',
+                'password' => 111111,
+                'apiToken' => 'test_token',
             ]
         ];
         foreach ($usersData as $user) {
@@ -41,6 +44,7 @@ class AppFixtures extends Fixture
             $newUser->setEmail($user['email']);
             $newUser->setPassword($this->encoder->hashPassword($newUser, $user['password']));
             $newUser->setRoles(['ROLE_USER']);
+            $newUser->setApiToken($user['apiToken']);
             $this->em->persist($newUser);
         }
     }
@@ -76,7 +80,7 @@ class AppFixtures extends Fixture
     }
 
     private function prepareOrders() {
-        $user = $this->em->getRepository(User::class)->findOneBy(['email' => 'user@example.com']);
+        $user = $this->em->getRepository(User::class)->findOneBy(['email' => 'test@example.com']);
         $productsRepository = $this->em->getRepository(Product::class);
         $products[] = $productsRepository->findOneBy(['name' => 'Microphone']);
         $products[] = $productsRepository->findOneBy(['name' => 'Guitar']);
