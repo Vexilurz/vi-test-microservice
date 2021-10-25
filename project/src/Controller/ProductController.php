@@ -34,9 +34,9 @@ class ProductController extends AbstractController
     }
 
     /**
-     * @Route("/available_in_order/{orderId}", name="product_available_in_order", methods={"GET"})
+     * @Route("/get_from_order/{orderId}", name="product_get_from_order", methods={"GET"})
      */
-    public function availableInOrder(Request $request, $orderId): Response
+    public function getFromOrder(Request $request, $orderId): Response
     {
         try {
             $productsSerialized = $this->service->getSerializedProductsFromOrder($request, $orderId);

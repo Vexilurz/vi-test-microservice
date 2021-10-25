@@ -47,7 +47,9 @@ class ProductService
         if (!$order) {
             throw new NotFoundHttpException('order not found');
         }
-        $products = $this->productRepository->findAvailableInOrder($order);
+
+        $available = $request->query->get('available');
+        $products = $available ? $this->productRepository->findAvailableInOrder($order) : $order->getProducts();
         return Serializer::getSerializedFromArray($products);
     }
 }
