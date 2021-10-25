@@ -10,61 +10,41 @@ class LoginTest extends VitmWebTestCase
 {
     public function testLogin(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/login',
-            ['email'=>'user@example.com','password'=>'123456']);
-
-        self::assertResponseIsSuccessful();
-        $response = $client->getResponse();
-        $responseData = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        self::assertArrayHasKey('message', $responseData);
-        self::assertSame('login success', $responseData['message']);
-        self::assertArrayHasKey('apiToken', $responseData);
+        $this->checkRequest('POST', '/login', ['email'=>'user@example.com','password'=>'123456'],
+        Response::HTTP_OK, 'login success', true);
     }
 
     public function testLoginNonExistentEmail(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/login',
+        $this->checkUnauthorized('POST', '/login',
             ['email'=>TestUtils::getRandomStr().'@example.com','password'=>'123456']);
-        $this->checkUnauthorized($client);
     }
 
     public function testLoginWithoutEmail(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/login',
+        $this->checkUnauthorized('POST', '/login',
             ['password'=>'123456']);
-        $this->checkUnauthorized($client);
     }
 
     public function testLoginWithoutPassword(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/login',
+        $this->checkUnauthorized('POST', '/login',
             ['email'=>'user@example.com']);
-        $this->checkUnauthorized($client);
     }
 
     public function testLoginWithIncorrectPassword(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/login',
+        $this->checkUnauthorized('POST', '/login',
             ['email'=>'user@example.com','password'=>'my_incorrect_password']);
-        $this->checkUnauthorized($client);
     }
 
     public function testLoginWithoutUserInformation(): void
     {
-        $client = static::createClient();
-        $client->request('POST', '/login');
-        $this->checkUnauthorized($client);
+        $this->checkUnauthorized('POST', '/login');
     }
 
     public function testLoginWithNotPostMethod(): void
     {
-        $client = static::createClient();
-        $client->request('GET', '/login');
-        self::assertResponseStatusCodeSame(Response::HTTP_METHOD_NOT_ALLOWED);
+        $this->checkRequest('GET', '/login', [], Response::HTTP_METHOD_NOT_ALLOWED);
     }
 }
