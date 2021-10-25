@@ -6,7 +6,7 @@ use App\Entity\Product;
 use App\Tests\VitmBaseWebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class ProductAddTestBase extends VitmBaseWebTestCase
+class ProductAddTest extends VitmBaseWebTestCase
 {
     public function setUp(): void
     {

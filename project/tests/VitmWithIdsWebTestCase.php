@@ -7,7 +7,7 @@ use App\Entity\Order;
 use App\Entity\Product;
 use App\Entity\User;
 
-abstract class VitmWithIdsBaseWebTestCase extends VitmBaseWebTestCase
+abstract class VitmWithIdsWebTestCase extends VitmBaseWebTestCase
 {
     private int $_firstOrderId = -1;
     private int $_firstProductId = -1;
