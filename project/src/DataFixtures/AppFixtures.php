@@ -29,6 +29,11 @@ class AppFixtures extends Fixture
                 'apiToken' => 'test_token',
             ],
             [
+                'email' => 'test2@example.com',
+                'password' => 111111,
+                'apiToken' => 'test_token2',
+            ],
+            [
                 'email' => 'user@example.com',
                 'password' => 123456,
                 'apiToken' => null,
