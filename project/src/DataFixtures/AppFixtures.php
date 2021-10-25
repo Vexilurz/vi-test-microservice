@@ -85,9 +85,9 @@ class AppFixtures extends Fixture
         $newOrder = new Order();
         $newOrder->setUser($user);
         $newOrder->setPaid(true);
-        $newOrder->setTotalPrice(0);
         $newOrder->addProduct($products[0]);
         $newOrder->addProduct($products[1]);
+        $newOrder->setTotalPrice($products[0]->getPrice() + $products[1]->getPrice());
         $dateTime = new \DateTimeImmutable('now - 15 days');
         $newOrder->setCreatedAt($dateTime);
         $newOrder->setUpdatedAt($dateTime);
@@ -105,9 +105,9 @@ class AppFixtures extends Fixture
         $newOrder = new Order();
         $newOrder->setUser($user);
         $newOrder->setPaid(false);
-        $newOrder->setTotalPrice(0);
         $newOrder->addProduct($products[1]);
         $newOrder->addProduct($products[2]);
+        $newOrder->setTotalPrice($products[1]->getPrice() + $products[2]->getPrice());
         $dateTime = new \DateTimeImmutable('now - 5 days');
         $newOrder->setCreatedAt($dateTime);
         $newOrder->setUpdatedAt($dateTime);
