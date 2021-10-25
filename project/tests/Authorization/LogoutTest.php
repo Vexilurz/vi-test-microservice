@@ -2,9 +2,9 @@
 
 namespace App\Tests\Authorization;
 
-use App\Tests\VitmWebTestCase;
+use App\Tests\VitmAuthWebTestCase;
 
-class LogoutTest extends VitmWebTestCase
+class LogoutTest extends VitmAuthWebTestCase
 {
     public function setUp(): void
     {

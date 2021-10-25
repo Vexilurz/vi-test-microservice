@@ -2,10 +2,9 @@
 
 namespace App\Tests\Authorization;
 
-use App\Tests\VitmWebTestCase;
-use Symfony\Component\HttpFoundation\Response;
+use App\Tests\VitmAuthWebTestCase;
 
-class LoginTest extends VitmWebTestCase
+class LoginTest extends VitmAuthWebTestCase
 {
     public function setUp(): void
     {

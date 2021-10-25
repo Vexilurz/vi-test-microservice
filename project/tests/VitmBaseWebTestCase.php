@@ -7,7 +7,7 @@ namespace App\Tests;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-abstract class VitmWebTestCase extends WebTestCase
+abstract class VitmBaseWebTestCase extends WebTestCase
 {
     private string $_method;
     private string $_url;
@@ -107,16 +107,5 @@ abstract class VitmWebTestCase extends WebTestCase
         $this->checkResponse();
         self::assertArrayHasKey('message', $this->_responseJson);
         self::assertSame($receivedMessage, $this->_responseJson['message']);
-    }
-
-    public function checkResponseWithApiToken(string $receivedMessage = ''): void
-    {
-        $this->checkResponseWithMessage($receivedMessage);
-        self::assertArrayHasKey('apiToken', $this->getResponseJson());
-    }
-
-    public function checkUnauthorized(string $receivedMessage = 'Invalid credentials.') {
-        $this->setResponseCode(Response::HTTP_UNAUTHORIZED);
-        $this->checkResponseWithMessage($receivedMessage);
     }
 }

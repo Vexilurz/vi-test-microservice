@@ -3,10 +3,10 @@
 namespace App\Tests\Authorization;
 
 use App\Entity\User;
-use App\Tests\VitmWebTestCase;
+use App\Tests\VitmAuthWebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class RegisterTest extends VitmWebTestCase
+class RegisterTest extends VitmAuthWebTestCase
 {
     public function setUp(): void
     {

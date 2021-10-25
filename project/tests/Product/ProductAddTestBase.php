@@ -3,10 +3,10 @@
 namespace App\Tests\Product;
 
 use App\Entity\Product;
-use App\Tests\VitmWebTestCase;
+use App\Tests\VitmBaseWebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class ProductAddTest extends VitmWebTestCase
+class ProductAddTestBase extends VitmBaseWebTestCase
 {
     public function setUp(): void
     {

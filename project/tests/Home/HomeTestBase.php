@@ -2,9 +2,9 @@
 
 namespace App\Tests\Home;
 
-use App\Tests\VitmWebTestCase;
+use App\Tests\VitmBaseWebTestCase;
 
-class HomeTest extends VitmWebTestCase
+class HomeTestBase extends VitmBaseWebTestCase
 {
     public function testHome(): void
     {
