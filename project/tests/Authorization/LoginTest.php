@@ -12,12 +12,13 @@ class LoginTest extends VitmWebTestCase
         parent::setUp();
         $this->setMethod('POST');
         $this->setUrl('/login');
+        $this->setApiToken('');
     }
 
     public function testLogin(): void
     {
         $this->setBody(['email'=>'user@example.com','password'=>'123456']);
-        $this->checkResponseWithMessage('login success', true);
+        $this->checkResponseWithApiToken('login success');
     }
 
     public function testLoginNonExistentEmail(): void
@@ -49,10 +50,10 @@ class LoginTest extends VitmWebTestCase
         $this->checkUnauthorized();
     }
 
-    public function testLoginWithNotPostMethod(): void
-    {
-        $this->setMethod('GET');
-        $this->setResponseCode(Response::HTTP_METHOD_NOT_ALLOWED);
-        $this->checkResponse(false);
-    }
+//    public function testLoginWithNotPostMethod(): void
+//    {
+//        $this->setMethod('GET');
+//        $this->setResponseCode(Response::HTTP_METHOD_NOT_ALLOWED);
+//        $this->checkResponse(false);
+//    }
 }

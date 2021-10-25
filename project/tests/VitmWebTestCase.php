@@ -30,7 +30,13 @@ abstract class VitmWebTestCase extends WebTestCase
         $this->_url = '/';
         $this->_body = [];
         $this->_responseCode = Response::HTTP_OK;
-        $this->_apiToken = '';
+        $this->_apiToken = 'test_token';
+    }
+
+    public function getDebugString(): string {
+        return "$this->_method $this->_responseCode $this->_url".
+            "\n\rbody: ".json_encode($this->_body).
+            "\r\napiToken: $this->_apiToken";
     }
 
     public function setMethod(string $method): void
@@ -41,6 +47,11 @@ abstract class VitmWebTestCase extends WebTestCase
     public function setUrl(string $url): void
     {
         $this->_url = $url;
+    }
+
+    public function addToUrl(string $url): void
+    {
+        $this->_url .= $url;
     }
 
     public function setBody(array $body): void
@@ -74,6 +85,10 @@ abstract class VitmWebTestCase extends WebTestCase
         return $this->_em;
     }
 
+    public function selfFail(\Exception $e) {
+        self::fail("{$e->getMessage()}\n\r{$this->getDebugString()}");
+    }
+
     public function checkResponse($decodeJson = true): void
     {
         $this->_client->request($this->_method, $this->_url, $this->_body, [], $this->getHeaders());
@@ -83,18 +98,21 @@ abstract class VitmWebTestCase extends WebTestCase
              $this->_responseJson = !$decodeJson ? [] :
                  json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
         } catch(\Exception $e) {
-            self::fail($e->getMessage());
+            $this->selfFail($e);
         }
     }
 
-    public function checkResponseWithMessage(string $receivedMessage = '', bool $apiTokenMustExist = false): void
+    public function checkResponseWithMessage(string $receivedMessage = ''): void
     {
         $this->checkResponse();
-        if ($receivedMessage) {
-            self::assertArrayHasKey('message', $this->_responseJson);
-            self::assertSame($receivedMessage, $this->_responseJson['message']);
-            self::assertSame($apiTokenMustExist, array_key_exists('apiToken', $this->_responseJson));
-        }
+        self::assertArrayHasKey('message', $this->_responseJson);
+        self::assertSame($receivedMessage, $this->_responseJson['message']);
+    }
+
+    public function checkResponseWithApiToken(string $receivedMessage = ''): void
+    {
+        $this->checkResponseWithMessage($receivedMessage);
+        self::assertArrayHasKey('apiToken', $this->getResponseJson());
     }
 
     public function checkUnauthorized(string $receivedMessage = 'Invalid credentials.') {

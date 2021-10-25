@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Service\ProductService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -25,7 +26,11 @@ class ProductController extends AbstractController
      */
     public function add(Request $request): Response
     {
-        $product = $this->service->add($request);
+        try {
+            $product = $this->service->add($request);
+        } catch(BadRequestException $e) {
+            return $this->json(['message'=>$e->getMessage()], Response::HTTP_BAD_REQUEST);
+        }
 
         return $this->json([
             'message' => 'product added',

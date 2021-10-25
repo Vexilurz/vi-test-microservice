@@ -33,6 +33,12 @@ class ProductRepository extends ServiceEntityRepository
         return $newProduct;
     }
 
+    public function delete(int $id) {
+        $product = $this->find($id);
+        $this->_em->remove($product);
+        $this->_em->flush();
+    }
+
     /**
      * @return Product[] Returns an array of Product objects
      */

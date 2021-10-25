@@ -13,18 +13,22 @@ class RegisterTest extends VitmWebTestCase
         parent::setUp();
         $this->setMethod('POST');
         $this->setUrl('/register');
+        $this->setApiToken('');
     }
 
     public function testRegister(): void
     {
         $newEmail = 'newuser@example.com';
         $this->setBody(['email'=>$newEmail,'password'=>'123456']);
+        $this->checkResponseWithApiToken('registration success');
 
-        $this->checkResponseWithMessage('registration success', true);
-
-        $this->getEntityManager()
-            ->getRepository(User::class)
-            ->deleteByEmail($newEmail);
+        try {
+            $this->getEntityManager()
+                ->getRepository(User::class)
+                ->deleteByEmail($newEmail);
+        } catch(\Exception $e) {
+            self::fail($e->getMessage());
+        }
     }
 
     public function testRegisterExisting(): void

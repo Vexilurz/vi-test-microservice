@@ -14,10 +14,10 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class UserController extends AbstractController
 {
-    private UserService $userService;
+    private UserService $service;
 
-    public function __construct(UserService $userService) {
-        $this->userService = $userService;
+    public function __construct(UserService $service) {
+        $this->service = $service;
     }
 
     /**
@@ -26,7 +26,7 @@ class UserController extends AbstractController
     public function getOrders(Request $request): Response
     {
         try {
-            $ordersSerialized = $this->userService->getSerializedOrders($request);
+            $ordersSerialized = $this->service->getSerializedOrders($request);
         } catch (HttpException $e) {
             return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
         }
@@ -39,7 +39,7 @@ class UserController extends AbstractController
     public function getOrdersByUserId(Request $request, $userId): Response
     {
         try {
-            $ordersSerialized = $this->userService->getSerializedOrders($request, $userId);
+            $ordersSerialized = $this->service->getSerializedOrders($request, $userId);
         } catch (HttpException $e) {
             return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
         }

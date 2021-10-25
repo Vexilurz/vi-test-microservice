@@ -11,17 +11,18 @@ class LogoutTest extends VitmWebTestCase
         parent::setUp();
         $this->setMethod('POST');
         $this->setUrl('/logout');
+        $this->setApiToken('');
     }
 
     public function testLogout(): void
     {
         $this->setUrl('/login');
         $this->setBody(['email'=>'user@example.com','password'=>'123456']);
-        $this->checkResponseWithMessage('login success', true);
+        $this->checkResponseWithApiToken('login success');
 
         $this->setUrl('/logout');
         $this->setApiToken($this->getResponseJson()['apiToken']);
-        $this->checkResponseWithMessage('logout success', );
+        $this->checkResponseWithMessage('logout success');
     }
 
     public function testLogoutWithBadToken(): void
