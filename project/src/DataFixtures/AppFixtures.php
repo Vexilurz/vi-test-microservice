@@ -24,6 +24,11 @@ class AppFixtures extends Fixture
     {
         $usersData = [
             [
+                'email' => 'test@example.com',
+                'password' => 111111,
+                'apiToken' => 'test_token',
+            ],
+            [
                 'email' => 'user@example.com',
                 'password' => 123456,
                 'apiToken' => null,
@@ -33,11 +38,6 @@ class AppFixtures extends Fixture
                 'password' => 111111,
                 'apiToken' => null,
             ],
-            [
-                'email' => 'test@example.com',
-                'password' => 111111,
-                'apiToken' => 'test_token',
-            ]
         ];
         foreach ($usersData as $user) {
             $newUser = new User();
