@@ -7,7 +7,7 @@ use App\Entity\User;
 use App\Tests\VitmWithIdsWebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class DeleteOrderTest extends VitmWithIdsWebTestCase
+class OrderDeleteTest extends VitmWithIdsWebTestCase
 {
     public function setUp(): void
     {

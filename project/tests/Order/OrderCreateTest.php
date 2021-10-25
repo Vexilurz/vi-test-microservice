@@ -5,7 +5,7 @@ namespace App\Tests\Order;
 use App\Entity\Order;
 use App\Tests\VitmWithIdsWebTestCase;
 
-class CreateOrderTest extends VitmWithIdsWebTestCase
+class OrderCreateTest extends VitmWithIdsWebTestCase
 {
     public function setUp(): void
     {
