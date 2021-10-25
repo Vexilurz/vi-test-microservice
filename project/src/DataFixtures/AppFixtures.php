@@ -92,7 +92,7 @@ class AppFixtures extends Fixture
         $newOrder->addProduct($products[0]);
         $newOrder->addProduct($products[1]);
         $newOrder->setTotalPrice($products[0]->getPrice() + $products[1]->getPrice());
-        $dateTime = new \DateTimeImmutable('now - 15 days');
+        $dateTime = new \DateTimeImmutable('2021-10-05');
         $newOrder->setCreatedAt($dateTime);
         $newOrder->setUpdatedAt($dateTime);
         $this->em->persist($newOrder);
@@ -101,7 +101,7 @@ class AppFixtures extends Fixture
         $newOrder->setUser($user);
         $newOrder->setPaid(false);
         $newOrder->setTotalPrice(0);
-        $dateTime = new \DateTimeImmutable('now - 10 day');
+        $dateTime = new \DateTimeImmutable('2021-10-10');
         $newOrder->setCreatedAt($dateTime);
         $newOrder->setUpdatedAt($dateTime);
         $this->em->persist($newOrder);
@@ -112,7 +112,7 @@ class AppFixtures extends Fixture
         $newOrder->addProduct($products[1]);
         $newOrder->addProduct($products[2]);
         $newOrder->setTotalPrice($products[1]->getPrice() + $products[2]->getPrice());
-        $dateTime = new \DateTimeImmutable('now - 5 days');
+        $dateTime = new \DateTimeImmutable('2021-10-15');
         $newOrder->setCreatedAt($dateTime);
         $newOrder->setUpdatedAt($dateTime);
         $this->em->persist($newOrder);
