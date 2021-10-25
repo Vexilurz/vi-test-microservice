@@ -2,19 +2,22 @@
 
 namespace App\Controller;
 
-use App\Repository\UserRepository;
+use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 
 class AuthController extends AbstractController
 {
-    private UserRepository $userRepository;
+    private UserService $userService;
 
-    public function __construct(UserRepository $userRepository)
+    public function __construct(UserService $userService)
     {
-        $this->userRepository = $userRepository;
+        $this->userService = $userService;
     }
 
     // name="app_login" must match with LoginRequestChecker LOGIN_ROUTE constant
@@ -24,7 +27,7 @@ class AuthController extends AbstractController
      */
     public function login(Request $request): Response
     {
-        $user = $this->userRepository->login($request);
+        $user = $this->userService->login($request);
 
         return $this->json([
             'message' => 'login success',
@@ -39,18 +42,11 @@ class AuthController extends AbstractController
      */
     public function register(Request $request): Response
     {
-        $email = $request->request->get('email', '');
-        $password = $request->request->get('password', '');
-        if (!$email || !$password) {
-            return $this->json(['message'=>'email or password is empty'], Response::HTTP_BAD_REQUEST);
+        try {
+            $user = $this->userService->register($request);
+        } catch (BadRequestException $e) {
+            return $this->json(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
-        //TODO: add validators
-        $user = $this->userRepository->findOneBy(['email' => $email]);
-        if ($user) {
-            return $this->json(['message'=>'user already exists'], Response::HTTP_BAD_REQUEST);
-        }
-
-        $user = $this->userRepository->create($email, $password);
 
         return $this->json([
             'message' => 'registration success',
@@ -63,7 +59,11 @@ class AuthController extends AbstractController
      */
     public function logout(Request $request): Response
     {
-        $user = $this->userRepository->logout($request);
+        try {
+            $user = $this->userService->logout($request);
+        } catch (UserNotFoundException $e) {
+            return $this->json(['message' => $e->getMessage()], Response::HTTP_NOT_FOUND);
+        }
 
         return $this->json([
             'message' => 'logout success'

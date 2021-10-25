@@ -2,6 +2,7 @@
 
 namespace App\Tests;
 
+use App\Entity\User;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -11,12 +12,12 @@ class AuthTest extends WebTestCase
         return md5(microtime());
     }
 
-    private function checkUnauthorized($client) {
+    private function checkUnauthorized($client, $message = 'Invalid credentials.') {
         self::assertResponseStatusCodeSame(Response::HTTP_UNAUTHORIZED);
         $response = $client->getResponse();
         $responseData = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
         self::assertArrayHasKey('message', $responseData);
-        self::assertSame('Invalid credentials.', $responseData['message']);
+        self::assertSame($message, $responseData['message']);
         self::assertArrayNotHasKey('apiToken', $responseData);
     }
 
@@ -82,9 +83,10 @@ class AuthTest extends WebTestCase
 
     public function testRegister(): void
     {
+        $newEmail = $this->getRandomStr().'@example.com';
         $client = static::createClient();
         $client->request('POST', '/register',
-            ['email'=>$this->getRandomStr().'@example.com','password'=>'123456']);
+            ['email'=>$newEmail,'password'=>'123456']);
 
         self::assertResponseIsSuccessful();
         $response = $client->getResponse();
@@ -92,6 +94,11 @@ class AuthTest extends WebTestCase
         self::assertArrayHasKey('message', $responseData);
         self::assertSame('registration success', $responseData['message']);
         self::assertArrayHasKey('apiToken', $responseData);
+
+//        $client->getContainer()
+//            ->get('doctrine.orm.entity_manager')
+//            ->getRepository(User::class)
+//            ->deleteByEmail($newEmail);
     }
 
     public function testRegisterExisting(): void
@@ -138,5 +145,38 @@ class AuthTest extends WebTestCase
         $client = static::createClient();
         $client->request('POST', '/register');
         $this->checkRegisterWithoutData($client);
+    }
+
+    public function testLogout(): void
+    {
+        $client = static::createClient();
+        $client->request('POST', '/logout', [], [], [
+            'HTTP_X-AUTH-TOKEN'=>'logout_token'
+        ]);
+
+        self::assertResponseIsSuccessful();
+        $response = $client->getResponse();
+        $responseData = json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        self::assertArrayHasKey('message', $responseData);
+        self::assertSame('logout success', $responseData['message']);
+        self::assertArrayNotHasKey('apiToken', $responseData);
+    }
+
+    public function testLogoutWithBadToken(): void
+    {
+        $client = static::createClient();
+        $client->request('POST', '/logout', [], [], [
+            'HTTP_X-AUTH-TOKEN'=>$this->getRandomStr()
+        ]);
+
+        $this->checkUnauthorized($client);
+    }
+
+    public function testLogoutWithoutToken(): void
+    {
+        $client = static::createClient();
+        $client->request('POST', '/logout');
+
+        $this->checkUnauthorized($client, 'No API token provided');
     }
 }

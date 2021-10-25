@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Repository\OrderRepository;
 use App\Repository\UserRepository;
 use App\Utils\Serializer;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
@@ -46,5 +47,32 @@ class UserService
         $orders = $onlyPaid ? $this->orderRepository->findPaidUserOrders($user) : $user->getOrders();
 
         return Serializer::getSerializedFromArray($orders);
+    }
+
+    public function login(Request $request): User
+    {
+        return $this->userRepository->login($request);
+    }
+
+    public function register(Request $request): User
+    {
+        $email = $request->request->get('email', '');
+        $password = $request->request->get('password', '');
+        if (!$email || !$password) {
+            throw new BadRequestException('email or password is empty');
+        }
+        //TODO: add validators
+        $user = $this->userRepository->findOneBy(['email' => $email]);
+        if ($user) {
+            throw new BadRequestException('user already exists');
+        }
+
+        return $this->userRepository->create($email, $password);
+    }
+
+    public function logout(Request $request): User
+    {
+        $user = $this->getFromRequest($request);
+        return $this->userRepository->logout($user);
     }
 }
