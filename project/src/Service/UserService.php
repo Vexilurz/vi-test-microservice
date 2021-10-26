@@ -5,7 +5,7 @@ namespace App\Service;
 use App\Entity\User;
 use App\Repository\OrderRepository;
 use App\Repository\UserRepository;
-use App\Utils\Serializer;
+use App\Utils\JsonConverter;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -44,9 +44,11 @@ class UserService
         }
 
         $onlyPaid = $request->query->get('paid');
-        $orders = $onlyPaid ? $this->orderRepository->findPaidUserOrders($user) : $user->getOrders();
+        $orders = $onlyPaid ?
+            $this->orderRepository->findPaidUserOrders($user) :
+            $user->getOrders()->getValues();
 
-        return Serializer::getSerializedFromArray($orders);
+        return JsonConverter::getJsonFromEntitiesArray($orders);
     }
 
     public function login(Request $request): User

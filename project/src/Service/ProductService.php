@@ -5,7 +5,7 @@ namespace App\Service;
 use App\Entity\Product;
 use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
-use App\Utils\Serializer;
+use App\Utils\JsonConverter;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -49,7 +49,9 @@ class ProductService
         }
 
         $available = $request->query->get('available');
-        $products = $available ? $this->productRepository->findAvailableInOrder($order) : $order->getProducts();
-        return Serializer::getSerializedFromArray($products);
+        $products = $available ?
+            $this->productRepository->findAvailableInOrder($order) :
+            $order->getProducts()->getValues();
+        return JsonConverter::getJsonFromEntitiesArray($products);
     }
 }

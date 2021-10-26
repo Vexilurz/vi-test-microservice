@@ -229,13 +229,22 @@
       </interpreter>
     </phpInfoCache>
   </component>
+  <component name="PhpProjectServersManager">
+    <servers>
+      <server host="vitm.localhost" id="b1a173cb-8b6e-4027-b29e-79054614a2f0" name="vitm.localhost" port="9001" use_path_mappings="true">
+        <path_mappings>
+          <mapping local-root="$PROJECT_DIR$/project" remote-root="/var/www" />
+          <mapping local-root="$PROJECT_DIR$/project/public" remote-root="/var/www/public" />
+        </path_mappings>
+      </server>
+    </servers>
+  </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4">
     <option name="suggestChangeDefaultLanguageLevel" value="false" />
   </component>
   <component name="PhpUnit">
     <phpunit_settings>
       <phpunit_by_interpreter interpreter_id="4f35798f-21fa-4584-b8a3-b23cb90b2c4d" load_method="PHPUNIT_PHAR" bootstrap_file_path="/opt/project/project/tests/bootstrap.php" configuration_file_path="/opt/project/project/phpunit.xml.dist" custom_loader_path="/opt/project/project/vendor/autoload.php" phpunit_phar_path="/opt/project/project/vendor/bin/simple-phpunit" use_configuration_file="true" />
-      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/project/vendor/autoload.php" />
     </phpunit_settings>
   </component>
 </project>

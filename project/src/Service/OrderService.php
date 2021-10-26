@@ -5,7 +5,7 @@ namespace App\Service;
 use App\Entity\Order;
 use App\Repository\OrderRepository;
 use App\Service\Payment\PaymentService;
-use App\Utils\Serializer;
+use App\Utils\JsonConverter;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
@@ -74,7 +74,7 @@ class OrderService
         $toDate = $toDate ? new \DateTimeImmutable($toDate) : (new \DateTimeImmutable('now'));
         $orders = $this->orderRepository->findOrdersByDate($fromDate, $toDate);
 
-        return Serializer::getSerializedFromArray($orders, ['includeUser'=>true]);
+        return JsonConverter::getJsonFromEntitiesArray($orders, ['includeUser'=>true]);
     }
 
     public function removeProduct(Request $request): Order

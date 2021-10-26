@@ -3,7 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\OrderRepository;
-use App\Utils\Serializer;
+use App\Utils\JsonConverter;
+use App\Utils\JsonConverterInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass=OrderRepository::class)
  * @ORM\Table(name="`order`")
  */
-class Order
+class Order implements JsonConverterInterface
 {
     /**
      * @ORM\Id
@@ -145,10 +146,10 @@ class Order
         return $this;
     }
 
-    public function getSerialized(array $options = []): array
+    public function getJsonArray(array $options = []): array
     {
-        $products = $this->getProducts();
-        $productsSerialized = Serializer::getSerializedFromArray($products);
+        $products = $this->getProducts()->getValues();
+        $productsSerialized = JsonConverter::getJsonFromEntitiesArray($products);
         $result = [
             'id' => $this->getId(),
             'paid' => $this->getPaid(),
@@ -158,7 +159,7 @@ class Order
             'updatedAt' => $this->getUpdatedAt()->getTimestamp()
         ];
         if (array_key_exists('includeUser', $options) && $options['includeUser']) {
-            $result['user'] = $this->getUser()->getSerialized();
+            $result['user'] = $this->getUser()->getJsonArray();
         }
 
         return $result;
