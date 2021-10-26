@@ -59,11 +59,7 @@ class AuthController extends AbstractController
      */
     public function logout(Request $request): Response
     {
-        try {
-            $user = $this->userService->logout($request);
-        } catch (UserNotFoundException $e) {
-            return $this->json(['message' => $e->getMessage()], Response::HTTP_NOT_FOUND);
-        }
+        $user = $this->userService->logout($request);
 
         return $this->json([
             'message' => 'logout success'

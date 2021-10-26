@@ -25,11 +25,7 @@ class UserController extends AbstractController
      */
     public function getOrders(Request $request): Response
     {
-        try {
-            $ordersSerialized = $this->service->getSerializedOrders($request);
-        } catch (HttpException $e) {
-            return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
-        }
+        $ordersSerialized = $this->service->getSerializedOrders($request);
         return $this->json($ordersSerialized);
     }
 

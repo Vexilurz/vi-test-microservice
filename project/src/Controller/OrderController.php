@@ -42,8 +42,6 @@ class OrderController extends AbstractController
             $this->service->delete($request);
         } catch (HttpException $e) {
             return $this->json(['message'=>$e->getMessage()], $e->getStatusCode());
-        } catch (\Exception $e) {
-            return $this->json(['message'=>$e->getMessage()], RESPONSE::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return $this->json([
@@ -102,13 +100,8 @@ class OrderController extends AbstractController
      */
     public function getOrders(Request $request): Response
     {
-        try {
-            $ordersSerialized = $this->service->getSerializedOrders($request);
-        } catch (HttpException $e) {
-            return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
-        } catch (\Exception $e) {
-            return $this->json(['message' => $e->getMessage()], RESPONSE::HTTP_BAD_REQUEST);
-        }
+        $ordersSerialized = $this->service->getSerializedOrders($request);
+
         return $this->json($ordersSerialized);
     }
 }
