@@ -5,8 +5,8 @@ namespace App\Service;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use App\Utils\TokenGenerator;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class AuthService
@@ -37,7 +37,7 @@ class AuthService
         $email = $request->request->get('email', '');
         $password = $request->request->get('password', '');
         if (!$email || !$password) {
-            throw new BadRequestException('email or password is empty');
+            throw new BadRequestHttpException('email or password is empty');
         }
         //TODO: add validators
         try {
@@ -45,7 +45,7 @@ class AuthService
         } catch(HttpException $e) {
             return $this->userRepository->create($email, $password);
         }
-        throw new BadRequestException('user already exists');
+        throw new BadRequestHttpException('user already exists');
     }
 
     public function logout(Request $request): User

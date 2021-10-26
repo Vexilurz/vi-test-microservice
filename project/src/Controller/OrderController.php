@@ -3,8 +3,9 @@
 namespace App\Controller;
 
 use App\Service\OrderService;
+use App\Service\Payment\AbstractPaymentService;
+use App\Service\Payment\DummyPaymentService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -16,9 +17,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class OrderController extends AbstractController
 {
     private OrderService $service;
+    private AbstractPaymentService $paymentService;
 
-    public function __construct(OrderService $service) {
+    public function __construct(OrderService $service, DummyPaymentService $paymentService) {
         $this->service = $service;
+        $this->paymentService = $paymentService;
     }
 
     /**
@@ -83,11 +86,9 @@ class OrderController extends AbstractController
     {
         try {
             $order = $this->service->getFromRequest($request);
-            $this->service->payOrder($order);
+            $this->paymentService->payOrder($order);
         } catch (HttpException $e) {
             return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
-        } catch (BadRequestException $e) {
-            return $this->json(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
 
         return $this->json([

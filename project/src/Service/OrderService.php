@@ -4,9 +4,7 @@ namespace App\Service;
 
 use App\Entity\Order;
 use App\Repository\OrderRepository;
-use App\Service\Payment\PaymentService;
 use App\Utils\JsonConverter;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -16,17 +14,14 @@ class OrderService
     private OrderRepository $orderRepository;
     private UserService $userService;
     private ProductService $productService;
-    private PaymentService $paymentService;
 
     public function __construct(OrderRepository $orderRepository,
                                 UserService $userService,
-                                ProductService $productService,
-                                PaymentService $paymentService
+                                ProductService $productService
     ) {
         $this->orderRepository = $orderRepository;
         $this->userService = $userService;
         $this->productService = $productService;
-        $this->paymentService = $paymentService;
     }
 
     public function getFromRequest(Request $request, $checkOwner = true): Order {
@@ -53,17 +48,6 @@ class OrderService
     {
         $order = $this->getFromRequest($request);
         $this->orderRepository->delete($order);
-    }
-
-    public function payOrder(Order $order): Order {
-        if ($order->getPaid())
-        {
-            throw new BadRequestException('order is paid already');
-        }
-        $method = $this->paymentService->getPaymentMethod();
-        $paymentResult = $method->payOrder($order);
-        //TODO: process if (!$paymentResult)
-        return $this->orderRepository->setPaid($order, $paymentResult);
     }
 
     public function getSerializedOrders(Request $request): array
