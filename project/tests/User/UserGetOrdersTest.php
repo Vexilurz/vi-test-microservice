@@ -36,6 +36,14 @@ class UserGetOrdersTest extends VitmWithIdsWebTestCase
         $this->checkReceivedOrders();
     }
 
+    public function testGetUserPaidOrdersFromApiToken(): void
+    {
+        $this->addToUrl('?paid=1');
+        $this->checkResponse();
+        self::assertSame(count($this->getResponseJson()), 1);
+        $this->checkExpectedProducts($this->getResponseJson()[0], ['Microphone', 'Guitar']);
+    }
+
     public function testGetUserOrdersFromUserId(): void
     {
         $this->addToUrl("/{$this->getTestUserId()}");
