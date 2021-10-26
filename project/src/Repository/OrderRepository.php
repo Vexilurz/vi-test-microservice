@@ -7,7 +7,6 @@ use App\Entity\Product;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use function Doctrine\ORM\QueryBuilder;
 
 /**
  * @method Order|null find($id, $lockMode = null, $lockVersion = null)

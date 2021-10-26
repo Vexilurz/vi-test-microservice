@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Service\OrderService;
-use App\Service\UserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,10 +14,10 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class OrderController extends AbstractController
 {
-    private OrderService $orderService;
+    private OrderService $service;
 
-    public function __construct(OrderService $orderService) {
-        $this->orderService = $orderService;
+    public function __construct(OrderService $service) {
+        $this->service = $service;
     }
 
     /**
@@ -26,7 +25,7 @@ class OrderController extends AbstractController
      */
     public function create(Request $request): Response
     {
-        $order = $this->orderService->create($request);
+        $order = $this->service->create($request);
 
         return $this->json([
             'message' => 'new order created',
@@ -40,11 +39,9 @@ class OrderController extends AbstractController
     public function delete(Request $request): Response
     {
         try {
-            $this->orderService->delete($request);
+            $this->service->delete($request);
         } catch (HttpException $e) {
             return $this->json(['message'=>$e->getMessage()], $e->getStatusCode());
-        } catch (\Exception $e) {
-            return $this->json(['message'=>$e->getMessage()], RESPONSE::HTTP_INTERNAL_SERVER_ERROR);
         }
 
         return $this->json([
@@ -58,7 +55,7 @@ class OrderController extends AbstractController
     public function addProduct(Request $request): Response
     {
         try {
-            $this->orderService->addProduct($request);
+            $this->service->addProduct($request);
         } catch (HttpException $e) {
             return $this->json(['message'=>$e->getMessage()], $e->getStatusCode());
         }
@@ -71,7 +68,7 @@ class OrderController extends AbstractController
     public function removeProduct(Request $request): Response
     {
         try {
-            $this->orderService->removeProduct($request);
+            $this->service->removeProduct($request);
         } catch (HttpException $e) {
             return $this->json(['message'=>$e->getMessage()], $e->getStatusCode());
         }
@@ -84,13 +81,13 @@ class OrderController extends AbstractController
     public function pay(Request $request): Response
     {
         try {
-            $order = $this->orderService->getFromRequest($request);
+            $order = $this->service->getFromRequest($request);
         }
         catch (HttpException $e) {
             return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
         }
 
-        $this->orderService->setPaid($order, true);
+        $this->service->setPaid($order, true);
 
         return $this->json([
             'message' => 'order has been paid',
@@ -103,13 +100,8 @@ class OrderController extends AbstractController
      */
     public function getOrders(Request $request): Response
     {
-        try {
-            $ordersSerialized = $this->orderService->getSerializedOrders($request);
-        } catch (HttpException $e) {
-            return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
-        } catch (\Exception $e) {
-            return $this->json(['message' => $e->getMessage()], RESPONSE::HTTP_BAD_REQUEST);
-        }
+        $ordersSerialized = $this->service->getSerializedOrders($request);
+
         return $this->json($ordersSerialized);
     }
 }

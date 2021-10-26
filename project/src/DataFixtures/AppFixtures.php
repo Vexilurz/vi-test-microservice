@@ -24,23 +24,32 @@ class AppFixtures extends Fixture
     {
         $usersData = [
             [
+                'email' => 'test@example.com',
+                'password' => 111111,
+                'apiToken' => 'test_token',
+            ],
+            [
+                'email' => 'test2@example.com',
+                'password' => 111111,
+                'apiToken' => 'test_token2',
+            ],
+            [
                 'email' => 'user@example.com',
-                'password' => 123456
+                'password' => 123456,
+                'apiToken' => null,
             ],
             [
                 'email' => 'user2@example.com',
-                'password' => 111111
+                'password' => 111111,
+                'apiToken' => null,
             ],
-            [
-                'email' => 'user3@example.com',
-                'password' => 222222
-            ]
         ];
         foreach ($usersData as $user) {
             $newUser = new User();
             $newUser->setEmail($user['email']);
             $newUser->setPassword($this->encoder->hashPassword($newUser, $user['password']));
             $newUser->setRoles(['ROLE_USER']);
+            $newUser->setApiToken($user['apiToken']);
             $this->em->persist($newUser);
         }
     }
@@ -76,7 +85,7 @@ class AppFixtures extends Fixture
     }
 
     private function prepareOrders() {
-        $user = $this->em->getRepository(User::class)->findOneBy(['email' => 'user@example.com']);
+        $user = $this->em->getRepository(User::class)->findOneBy(['email' => 'test@example.com']);
         $productsRepository = $this->em->getRepository(Product::class);
         $products[] = $productsRepository->findOneBy(['name' => 'Microphone']);
         $products[] = $productsRepository->findOneBy(['name' => 'Guitar']);
@@ -88,7 +97,7 @@ class AppFixtures extends Fixture
         $newOrder->addProduct($products[0]);
         $newOrder->addProduct($products[1]);
         $newOrder->setTotalPrice($products[0]->getPrice() + $products[1]->getPrice());
-        $dateTime = new \DateTimeImmutable('now - 15 days');
+        $dateTime = new \DateTimeImmutable('2021-10-05');
         $newOrder->setCreatedAt($dateTime);
         $newOrder->setUpdatedAt($dateTime);
         $this->em->persist($newOrder);
@@ -97,7 +106,7 @@ class AppFixtures extends Fixture
         $newOrder->setUser($user);
         $newOrder->setPaid(false);
         $newOrder->setTotalPrice(0);
-        $dateTime = new \DateTimeImmutable('now - 10 day');
+        $dateTime = new \DateTimeImmutable('2021-10-10');
         $newOrder->setCreatedAt($dateTime);
         $newOrder->setUpdatedAt($dateTime);
         $this->em->persist($newOrder);
@@ -108,7 +117,7 @@ class AppFixtures extends Fixture
         $newOrder->addProduct($products[1]);
         $newOrder->addProduct($products[2]);
         $newOrder->setTotalPrice($products[1]->getPrice() + $products[2]->getPrice());
-        $dateTime = new \DateTimeImmutable('now - 5 days');
+        $dateTime = new \DateTimeImmutable('2021-10-15');
         $newOrder->setCreatedAt($dateTime);
         $newOrder->setUpdatedAt($dateTime);
         $this->em->persist($newOrder);

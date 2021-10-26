@@ -151,6 +151,7 @@
       <path value="$PROJECT_DIR$/project/vendor/symfony/serializer" />
       <path value="$PROJECT_DIR$/project/vendor/symfony/expression-language" />
       <path value="$PROJECT_DIR$/project/vendor/symfony/validator" />
+      <path value="$PROJECT_DIR$/project/vendor/bin/.phpunit" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
@@ -232,7 +233,7 @@
   </component>
   <component name="PhpUnit">
     <phpunit_settings>
-      <PhpUnitSettings custom_loader_path="$PROJECT_DIR$/project/vendor/autoload.php" />
+      <phpunit_by_interpreter interpreter_id="4f35798f-21fa-4584-b8a3-b23cb90b2c4d" load_method="PHPUNIT_PHAR" bootstrap_file_path="/opt/project/project/tests/bootstrap.php" configuration_file_path="/opt/project/project/phpunit.xml.dist" custom_loader_path="/opt/project/project/vendor/autoload.php" phpunit_phar_path="/opt/project/project/vendor/bin/simple-phpunit" use_configuration_file="true" />
     </phpunit_settings>
   </component>
 </project>

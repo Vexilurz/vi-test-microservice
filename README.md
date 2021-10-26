@@ -11,3 +11,9 @@ Launch steps:
 To apply fixtures:
 
 - execute `symfony console doctrine:fixtures:load`
+
+**Before run tests:**
+
+- execute `APP_ENV=test symfony console doctrine:database:create`
+- execute `APP_ENV=test symfony console doctrine:migrations:migrate -n`
+- execute `APP_ENV=test symfony console doctrine:fixtures:load -n`
