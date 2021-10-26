@@ -16,6 +16,7 @@ class OrderRemoveProductTest extends VitmWithIdsWebTestCase
 
     public function testRemoveProduct(): void
     {
+        //TODO: same #2
         $this->setUrl('/order/add_product');
         $this->setBody(['orderId'=>$this->getFirstOrderId(), 'productId'=>$this->getFirstProductId() + 2]);
         $this->checkResponseWithMessage('product added to the order');

@@ -2,7 +2,6 @@
 
 namespace App\Tests\Authorization;
 
-use App\Entity\User;
 use App\Tests\VitmAuthWebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -21,14 +20,6 @@ class RegisterTest extends VitmAuthWebTestCase
         $newEmail = 'newuser@example.com';
         $this->setBody(['email'=>$newEmail,'password'=>'123456']);
         $this->checkResponseWithApiToken('registration success');
-
-        try {
-            $this->getEntityManager()
-                ->getRepository(User::class)
-                ->deleteByEmail($newEmail);
-        } catch(\Exception $e) {
-            self::fail($e->getMessage());
-        }
     }
 
     public function testRegisterExisting(): void

@@ -18,16 +18,14 @@ class OrderDeleteTest extends VitmWithIdsWebTestCase
 
     public function testDeleteOrder(): void
     {
-        try {
-            $user = $this->getEntityManager()->getRepository(User::class)
-                ->find($this->getTestUserId());
-            $order = $this->getEntityManager()->getRepository(Order::class)
-                ->create($user);
-        } catch(\Exception $e) {
-            $this->selfFail($e);
-        }
+        //TODO: same #1
+        $this->setUrl('/order/create');
+        $this->checkResponseWithMessage('new order created');
+        self::assertArrayHasKey('id', $this->getResponseJson());
+        $id = $this->getResponseJson()['id'];
 
-        $this->setBody(['orderId'=>$order->getId()]);
+        $this->setUrl('/order/delete');
+        $this->setBody(['orderId'=>$id]);
         $this->checkResponseWithMessage('order deleted');
     }
 

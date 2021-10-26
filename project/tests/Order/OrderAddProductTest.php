@@ -16,7 +16,8 @@ class OrderAddProductTest extends VitmWithIdsWebTestCase
 
     public function testAddProduct(): void
     {
-        $this->setBody(['orderId'=>$this->getFirstOrderId(), 'productId'=>$this->getFirstProductId()]);
+        //TODO: same #2
+        $this->setBody(['orderId'=>$this->getFirstOrderId(), 'productId'=>$this->getFirstProductId() + 2]);
         $this->checkResponseWithMessage('product added to the order');
     }
 

@@ -18,14 +18,5 @@ class OrderCreateTest extends VitmWithIdsWebTestCase
     {
         $this->checkResponseWithMessage('new order created');
         self::assertArrayHasKey('id', $this->getResponseJson());
-
-        try {
-            $id = $this->getResponseJson()['id'];
-            $repository = $this->getEntityManager()->getRepository(Order::class);
-            $order = $repository->find($id);
-            $repository->delete($order);
-        } catch(\Exception $e) {
-            $this->selfFail($e);
-        }
     }
 }

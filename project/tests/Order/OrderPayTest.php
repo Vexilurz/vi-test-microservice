@@ -17,6 +17,7 @@ class OrderPayTest extends VitmWithIdsWebTestCase
 
     public function testPay(): void
     {
+        //TODO: same #1
         $this->setUrl('/order/create');
         $this->checkResponseWithMessage('new order created');
         self::assertArrayHasKey('id', $this->getResponseJson());
@@ -25,14 +26,6 @@ class OrderPayTest extends VitmWithIdsWebTestCase
         $this->setUrl('/order/pay');
         $this->setBody(['orderId'=>$id]);
         $this->checkResponseWithMessage('order has been paid');
-
-        try {
-            $repository = $this->getEntityManager()->getRepository(Order::class);
-            $order = $repository->find($id);
-            $repository->delete($order);
-        } catch(\Exception $e) {
-            $this->selfFail($e);
-        }
     }
 
     public function testPaidAlready(): void
