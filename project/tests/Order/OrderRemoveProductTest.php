@@ -27,7 +27,7 @@ class OrderRemoveProductTest extends VitmWithIdsWebTestCase
 
     public function testRemoveProductNotOrderOwner(): void
     {
-        $this->setApiToken('test_token2');
+        $this->setNotOwnerApiToken();
         $this->setBody(['orderId'=>$this->getFirstOrderId(), 'productId'=>$this->getFirstProductId()]);
         $this->setResponseCode(Response::HTTP_FORBIDDEN);
         $this->checkResponseWithMessage('user is not the owner of the order');

@@ -33,7 +33,7 @@ class OrderDeleteTest extends VitmWithIdsWebTestCase
 
     public function testNotOwnerDeleteOrder(): void
     {
-        $this->setApiToken('test_token2');
+        $this->setNotOwnerApiToken();
         $this->setBody(['orderId'=>$this->getFirstOrderId()]);
         $this->setResponseCode(Response::HTTP_FORBIDDEN);
         $this->checkResponseWithMessage('user is not the owner of the order');

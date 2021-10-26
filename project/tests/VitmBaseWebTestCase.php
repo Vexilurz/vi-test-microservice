@@ -33,6 +33,10 @@ abstract class VitmBaseWebTestCase extends WebTestCase
         $this->_apiToken = 'test_token';
     }
 
+    public function setNotOwnerApiToken() {
+        $this->_apiToken = 'test_token2';
+    }
+
     public function getDebugString(): string {
         return "$this->_method $this->_responseCode $this->_url".
             "\n\rbody: ".json_encode($this->_body).
