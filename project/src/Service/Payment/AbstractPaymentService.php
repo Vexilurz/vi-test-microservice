@@ -12,7 +12,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 abstract class AbstractPaymentService
 {
     private OrderRepository $orderRepository;
-    private PaymentStrategyInterface $paymentStrategy;
+    private $paymentStrategy;
 
     public function __construct(OrderRepository $orderRepository)
     {
