@@ -6,7 +6,6 @@ use App\Entity\User;
 use App\Utils\TokenGenerator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -57,8 +56,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $newUser;
     }
 
-    public function login(Request $request): User {
-        $email = $request->request->get('email', '');
+    public function login(string $email): User {
         $user = $this->findOneBy(['email' => $email]);
         $user->setApiToken($this->tokenGenerator->getNewApiToken());
         $this->_em->flush();
