@@ -6,8 +6,8 @@ use App\Entity\Product;
 use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
 use App\Utils\JsonConverter;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ProductService
@@ -26,7 +26,7 @@ class ProductService
         $name = $request->request->get('name', '');
         $price = $request->request->get('price', 0);
         if (!$name) {
-            throw new BadRequestException('name is empty');
+            throw new BadRequestHttpException('name is empty');
         }
 
         return $this->productRepository->add($name, $price);

@@ -47,8 +47,7 @@ class AuthController extends AbstractController
         }
 
         return $this->json([
-            'message' => 'registration success',
-            'apiToken' => $user->getApiToken()
+            'message' => 'registration success'
         ]);
     }
 

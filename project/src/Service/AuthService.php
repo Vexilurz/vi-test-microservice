@@ -4,24 +4,32 @@ namespace App\Service;
 
 use App\Entity\User;
 use App\Repository\UserRepository;
+use App\Utils\TokenGenerator;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class AuthService
 {
     private UserRepository $userRepository;
-    private UserService $userService;
+    private TokenGenerator $tokenGenerator;
 
     public function __construct(UserRepository $userRepository,
-                                UserService $userService) {
+                                TokenGenerator $tokenGenerator) {
         $this->userRepository = $userRepository;
-        $this->userService = $userService;
+        $this->tokenGenerator = $tokenGenerator;
+    }
+
+    public function getApiTokenFromRequest(Request $request): string
+    {
+        return $request->headers->get('X-AUTH-TOKEN');
     }
 
     public function login(Request $request): User
     {
         $email = $request->request->get('email', '');
-        return $this->userRepository->login($email);
+        $newApiToken = $this->tokenGenerator->getNewApiToken();
+        return $this->userRepository->login($email, $newApiToken);
     }
 
     public function register(Request $request): User
@@ -32,17 +40,18 @@ class AuthService
             throw new BadRequestException('email or password is empty');
         }
         //TODO: add validators
-        $user = $this->userRepository->findOneBy(['email' => $email]);
-        if ($user) {
-            throw new BadRequestException('user already exists');
+        try {
+            $this->userRepository->findByEmail($email);
+        } catch(HttpException $e) {
+            return $this->userRepository->create($email, $password);
         }
-
-        return $this->userRepository->create($email, $password);
+        throw new BadRequestException('user already exists');
     }
 
     public function logout(Request $request): User
     {
-        $user = $this->userService->getFromRequest($request);
-        return $this->userRepository->logout($user);
+        $apiToken = $this->getApiTokenFromRequest($request);
+        $user = $this->userRepository->findByApiToken($apiToken);
+        return $this->userRepository->logout($user->getEmail());
     }
 }

@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
@@ -28,8 +28,8 @@ class ProductController extends AbstractController
     {
         try {
             $product = $this->service->add($request);
-        } catch(BadRequestException $e) {
-            return $this->json(['message'=>$e->getMessage()], Response::HTTP_BAD_REQUEST);
+        } catch(HttpException $e) {
+            return $this->json(['message'=>$e->getMessage()], $e->getStatusCode());
         }
 
         return $this->json([
@@ -45,7 +45,7 @@ class ProductController extends AbstractController
     {
         try {
             $productsSerialized = $this->service->getSerializedProductsFromOrder($request, $orderId);
-        } catch(NotFoundHttpException $e) {
+        } catch(HttpException $e) {
             return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
         }
 

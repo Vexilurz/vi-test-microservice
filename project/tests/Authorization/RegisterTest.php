@@ -17,9 +17,8 @@ class RegisterTest extends VitmAuthWebTestCase
 
     public function testRegister(): void
     {
-        $newEmail = 'newuser@example.com';
-        $this->setBody(['email'=>$newEmail,'password'=>'123456']);
-        $this->checkResponseWithApiToken('registration success');
+        $this->setBody(['email'=>'newuser@example.com','password'=>'123456']);
+        $this->checkResponseWithMessage('registration success');
     }
 
     public function testRegisterExisting(): void

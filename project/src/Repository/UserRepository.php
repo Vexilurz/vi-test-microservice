@@ -3,9 +3,9 @@
 namespace App\Repository;
 
 use App\Entity\User;
-use App\Utils\TokenGenerator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -20,14 +20,11 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
     private $encoder;
-    private TokenGenerator $tokenGenerator;
 
-    public function __construct(ManagerRegistry $registry, UserPasswordHasherInterface $encoder,
-                                TokenGenerator $tokenGenerator)
+    public function __construct(ManagerRegistry $registry, UserPasswordHasherInterface $encoder)
     {
         parent::__construct($registry, User::class);
         $this->encoder = $encoder;
-        $this->tokenGenerator = $tokenGenerator;
     }
 
     /**
@@ -44,11 +41,22 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
+    public function findByApiToken(string $apiToken): User {
+        $user = $this->findOneBy(['apiToken' => $apiToken]);
+        if (!$user) { throw new NotFoundHttpException('user not found'); }
+        return $user;
+    }
+
+    public function findByEmail(string $email): User {
+        $user = $this->findOneBy(['email' => $email]);
+        if (!$user) { throw new NotFoundHttpException('user not found'); }
+        return $user;
+    }
+
     public function create(string $email, string $password): User {
         $newUser = new User();
         $newUser->setEmail($email);
         $newUser->setPassword($this->encoder->hashPassword($newUser, $password));
-        $newUser->setApiToken($this->tokenGenerator->getNewApiToken());
         $newUser->setRoles(['ROLE_USER']);
         $this->_em->persist($newUser);
         $this->_em->flush();
@@ -56,15 +64,16 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $newUser;
     }
 
-    public function login(string $email): User {
-        $user = $this->findOneBy(['email' => $email]);
-        $user->setApiToken($this->tokenGenerator->getNewApiToken());
+    public function login(string $email, string $newApiToken): User {
+        $user = $this->findByEmail($email);
+        $user->setApiToken($newApiToken);
         $this->_em->flush();
 
         return $user;
     }
 
-    public function logout(User $user): User {
+    public function logout(string $email): User {
+        $user = $this->findByEmail($email);
         $user->setApiToken(null);
         $this->_em->flush();
         return $user;
