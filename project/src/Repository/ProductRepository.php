@@ -33,6 +33,7 @@ class ProductRepository extends ServiceEntityRepository
         return $newProduct;
     }
 
+    //TODO: think about Product arg instead of id
     public function delete(int $id) {
         $product = $this->find($id);
         $this->_em->remove($product);

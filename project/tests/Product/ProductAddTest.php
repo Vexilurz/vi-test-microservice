@@ -48,7 +48,7 @@ class ProductAddTest extends VitmBaseWebTestCase
         $this->checkResponseWithMessage('name is empty');
     }
 
-    public function testAddWithoutAnyData(): void
+    public function testAddWithoutBodyData(): void
     {
         $this->setResponseCode(Response::HTTP_BAD_REQUEST);
         $this->checkResponseWithMessage('name is empty');
