@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Service\OrderService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -82,12 +83,12 @@ class OrderController extends AbstractController
     {
         try {
             $order = $this->service->getFromRequest($request);
-        }
-        catch (HttpException $e) {
+            $this->service->payOrder($order);
+        } catch (HttpException $e) {
             return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
+        } catch (BadRequestException $e) {
+            return $this->json(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
         }
-
-        $this->service->setPaid($order, true);
 
         return $this->json([
             'message' => 'order has been paid',

@@ -2,6 +2,7 @@
 
 namespace App\Tests\Order;
 
+use App\Entity\Order;
 use App\Tests\VitmWithIdsWebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,8 +17,29 @@ class OrderPayTest extends VitmWithIdsWebTestCase
 
     public function testPay(): void
     {
-        $this->setBody(['orderId'=>$this->getFirstOrderId()]);
+        $this->setUrl('/order/create');
+        $this->checkResponseWithMessage('new order created');
+        self::assertArrayHasKey('id', $this->getResponseJson());
+        $id = $this->getResponseJson()['id'];
+
+        $this->setUrl('/order/pay');
+        $this->setBody(['orderId'=>$id]);
         $this->checkResponseWithMessage('order has been paid');
+
+        try {
+            $repository = $this->getEntityManager()->getRepository(Order::class);
+            $order = $repository->find($id);
+            $repository->delete($order);
+        } catch(\Exception $e) {
+            $this->selfFail($e);
+        }
+    }
+
+    public function testPaidAlready(): void
+    {
+        $this->setBody(['orderId'=>$this->getFirstOrderId()]);
+        $this->setResponseCode(Response::HTTP_BAD_REQUEST);
+        $this->checkResponseWithMessage('order is paid already');
     }
 
     public function testPayNotOwner(): void
