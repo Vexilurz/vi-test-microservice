@@ -11,17 +11,11 @@ class LogoutTest extends VitmAuthWebTestCase
         parent::setUp();
         $this->setMethod('POST');
         $this->setUrl('/logout');
-        $this->setApiToken('');
     }
 
     public function testLogout(): void
     {
-        $this->setUrl('/login');
-        $this->setBody(['email'=>'user@example.com','password'=>'123456']);
-        $this->checkResponseWithApiToken('login success');
-
         $this->setUrl('/logout');
-        $this->setApiToken($this->getResponseJson()['apiToken']);
         $this->checkResponseWithMessage('logout success');
     }
 
@@ -33,6 +27,7 @@ class LogoutTest extends VitmAuthWebTestCase
 
     public function testLogoutWithoutToken(): void
     {
+        $this->setApiToken('');
         $this->checkUnauthorized('No API token provided');
     }
 }

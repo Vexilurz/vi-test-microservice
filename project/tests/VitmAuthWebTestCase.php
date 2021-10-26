@@ -6,11 +6,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class VitmAuthWebTestCase extends VitmBaseWebTestCase
 {
-    public function setUp(): void
-    {
-        parent::setUp();
-    }
-
     public function checkResponseWithApiToken(string $receivedMessage = ''): void
     {
         $this->checkResponseWithMessage($receivedMessage);

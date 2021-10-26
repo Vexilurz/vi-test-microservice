@@ -2,10 +2,9 @@
 
 namespace App\Tests\Order;
 
-use App\Tests\VitmWithIdsWebTestCase;
-use Symfony\Component\HttpFoundation\Response;
+use App\Tests\VitmBaseWebTestCase;
 
-class OrderGetTest extends VitmWithIdsWebTestCase
+class OrderGetTest extends VitmBaseWebTestCase
 {
     public function setUp(): void
     {
@@ -17,7 +16,7 @@ class OrderGetTest extends VitmWithIdsWebTestCase
     {
         $this->checkResponse();
         self::assertSame(count($this->getResponseJson()), 3);
-        self::assertSame($this->getResponseJson()[0]['id'], $this->getFirstOrderId());
+        self::assertSame($this->getResponseJson()[0]['orderId'], 1);
         //TODO: create something common with UserGetOrdersTest to test received orders
     }
 
@@ -26,7 +25,7 @@ class OrderGetTest extends VitmWithIdsWebTestCase
         $this->addToUrl('?fromDate=2021-10-01&toDate=2021-10-20');
         $this->checkResponse();
         self::assertSame(count($this->getResponseJson()), 3);
-        self::assertSame($this->getResponseJson()[0]['id'], $this->getFirstOrderId());
+        self::assertSame($this->getResponseJson()[0]['orderId'], 1);
     }
 
     public function testGetOrdersWithNoMatchingTime(): void
@@ -41,7 +40,7 @@ class OrderGetTest extends VitmWithIdsWebTestCase
         $this->addToUrl('?toDate=2021-10-07');
         $this->checkResponse();
         self::assertSame(count($this->getResponseJson()), 1);
-        self::assertSame($this->getResponseJson()[0]['id'], $this->getFirstOrderId());
+        self::assertSame($this->getResponseJson()[0]['orderId'], 1);
     }
 
     public function testGetSecondOrderByTime(): void
@@ -49,7 +48,7 @@ class OrderGetTest extends VitmWithIdsWebTestCase
         $this->addToUrl('?fromDate=2021-10-07&toDate=2021-10-13');
         $this->checkResponse();
         self::assertSame(count($this->getResponseJson()), 1);
-        self::assertSame($this->getResponseJson()[0]['id'], $this->getFirstOrderId() + 1);
+        self::assertSame($this->getResponseJson()[0]['orderId'], 2);
     }
 
     public function testGetThirdOrderByTime(): void
@@ -57,7 +56,7 @@ class OrderGetTest extends VitmWithIdsWebTestCase
         $this->addToUrl('?fromDate=2021-10-13');
         $this->checkResponse();
         self::assertSame(count($this->getResponseJson()), 1);
-        self::assertSame($this->getResponseJson()[0]['id'], $this->getFirstOrderId() + 2);
+        self::assertSame($this->getResponseJson()[0]['orderId'], 3);
     }
 
     public function testGetLastTwoOrdersByTime(): void
@@ -65,7 +64,7 @@ class OrderGetTest extends VitmWithIdsWebTestCase
         $this->addToUrl('?fromDate=2021-10-07');
         $this->checkResponse();
         self::assertSame(count($this->getResponseJson()), 2);
-        self::assertSame($this->getResponseJson()[0]['id'], $this->getFirstOrderId() + 1);
+        self::assertSame($this->getResponseJson()[0]['orderId'], 2);
     }
 
     public function testGetFirstTwoOrdersByTime(): void
@@ -73,6 +72,6 @@ class OrderGetTest extends VitmWithIdsWebTestCase
         $this->addToUrl('?toDate=2021-10-13');
         $this->checkResponse();
         self::assertSame(count($this->getResponseJson()), 2);
-        self::assertSame($this->getResponseJson()[0]['id'], $this->getFirstOrderId());
+        self::assertSame($this->getResponseJson()[0]['orderId'], 1);
     }
 }

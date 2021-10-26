@@ -2,10 +2,10 @@
 
 namespace App\Tests\Product;
 
-use App\Tests\VitmWithIdsWebTestCase;
+use App\Tests\VitmBaseWebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class ProductGetFromOrderTest extends VitmWithIdsWebTestCase
+class ProductGetFromOrderTest extends VitmBaseWebTestCase
 {
     public function setUp(): void
     {
@@ -15,7 +15,7 @@ class ProductGetFromOrderTest extends VitmWithIdsWebTestCase
 
     public function testGetAllProductsFromOrder(): void
     {
-        $this->addToUrl("/{$this->getFirstOrderId()}");
+        $this->addToUrl("/1");
         $this->checkResponse();
         self::assertSame(count($this->getResponseJson()), 2);
         $expectedProducts = ['Microphone', 'Guitar'];
@@ -26,7 +26,7 @@ class ProductGetFromOrderTest extends VitmWithIdsWebTestCase
 
     public function testGetAvailableProductsFromOrder(): void
     {
-        $this->addToUrl("/{$this->getFirstOrderId()}?available=1");
+        $this->addToUrl("/1?available=1");
         $this->checkResponse();
         self::assertSame(count($this->getResponseJson()), 1);
         self::assertSame($this->getResponseJson()[0]['name'], 'Microphone');

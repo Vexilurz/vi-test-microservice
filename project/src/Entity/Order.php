@@ -151,7 +151,7 @@ class Order implements JsonConverterInterface
         $products = $this->getProducts()->getValues();
         $productsSerialized = JsonConverter::getJsonFromEntitiesArray($products);
         $result = [
-            'id' => $this->getId(),
+            'orderId' => $this->getId(),
             'paid' => $this->getPaid(),
             'totalPrice' => $this->getTotalPrice(),
             'products' => $productsSerialized,

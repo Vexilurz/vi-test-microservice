@@ -150,7 +150,7 @@ class Product implements JsonConverterInterface
     public function getJsonArray(array $options = []): array
     {
         return [
-            'id' => $this->getId(),
+            'productId' => $this->getId(),
             'name' => $this->getName(),
             'price' => $this->getPrice(),
             'available' => $this->getAvailable(),

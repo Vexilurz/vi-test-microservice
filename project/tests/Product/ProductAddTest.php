@@ -2,7 +2,6 @@
 
 namespace App\Tests\Product;
 
-use App\Entity\Product;
 use App\Tests\VitmBaseWebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 

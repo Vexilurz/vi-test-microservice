@@ -2,10 +2,10 @@
 
 namespace App\Tests\User;
 
-use App\Tests\VitmWithIdsWebTestCase;
+use App\Tests\VitmBaseWebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class UserGetOrdersTest extends VitmWithIdsWebTestCase
+class UserGetOrdersTest extends VitmBaseWebTestCase
 {
     public function setUp(): void
     {
@@ -46,7 +46,7 @@ class UserGetOrdersTest extends VitmWithIdsWebTestCase
 
     public function testGetUserOrdersFromUserId(): void
     {
-        $this->addToUrl("/{$this->getTestUserId()}");
+        $this->addToUrl("/1");
         $this->checkResponse();
         $this->checkReceivedOrders();
     }

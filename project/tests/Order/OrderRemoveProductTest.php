@@ -2,10 +2,10 @@
 
 namespace App\Tests\Order;
 
-use App\Tests\VitmWithIdsWebTestCase;
+use App\Tests\VitmBaseWebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class OrderRemoveProductTest extends VitmWithIdsWebTestCase
+class OrderRemoveProductTest extends VitmBaseWebTestCase
 {
     public function setUp(): void
     {
@@ -16,48 +16,42 @@ class OrderRemoveProductTest extends VitmWithIdsWebTestCase
 
     public function testRemoveProduct(): void
     {
-        //TODO: same #2
-        $this->setUrl('/order/add_product');
-        $this->setBody(['orderId'=>$this->getFirstOrderId(), 'productId'=>$this->getFirstProductId() + 2]);
-        $this->checkResponseWithMessage('product added to the order');
-
-        $this->setUrl('/order/remove_product');
-        $this->setBody(['orderId'=>$this->getFirstOrderId(), 'productId'=>$this->getFirstProductId() + 2]);
+        $this->setBody(['orderId'=>1, 'productId'=>1]);
         $this->checkResponseWithMessage('product removed from the order');
     }
 
     public function testRemoveProductNotOrderOwner(): void
     {
         $this->setNotOwnerApiToken();
-        $this->setBody(['orderId'=>$this->getFirstOrderId(), 'productId'=>$this->getFirstProductId()]);
+        $this->setBody(['orderId'=>1, 'productId'=>1]);
         $this->setResponseCode(Response::HTTP_FORBIDDEN);
         $this->checkResponseWithMessage('user is not the owner of the order');
     }
 
     public function testRemoveProductWrongOrderId(): void
     {
-        $this->setBody(['orderId'=>-1, 'productId'=>$this->getFirstProductId()]);
+        $this->setBody(['orderId'=>-1, 'productId'=>1]);
         $this->setResponseCode(Response::HTTP_NOT_FOUND);
         $this->checkResponseWithMessage('order not found');
     }
 
     public function testRemoveProductWithoutOrderId(): void
     {
-        $this->setBody(['productId'=>$this->getFirstProductId()]);
+        $this->setBody(['productId'=>1]);
         $this->setResponseCode(Response::HTTP_NOT_FOUND);
         $this->checkResponseWithMessage('order not found');
     }
 
     public function testRemoveProductWrongProductId(): void
     {
-        $this->setBody(['orderId'=>$this->getFirstOrderId(), 'productId'=>-1]);
+        $this->setBody(['orderId'=>1, 'productId'=>-1]);
         $this->setResponseCode(Response::HTTP_NOT_FOUND);
         $this->checkResponseWithMessage('product not found');
     }
 
     public function testRemoveProductWithoutProductId(): void
     {
-        $this->setBody(['orderId'=>$this->getFirstOrderId()]);
+        $this->setBody(['orderId'=>1]);
         $this->setResponseCode(Response::HTTP_NOT_FOUND);
         $this->checkResponseWithMessage('product not found');
     }
