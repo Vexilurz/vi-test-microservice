@@ -67,4 +67,12 @@ class OrderGetTest extends VitmWithIdsWebTestCase
         self::assertSame(count($this->getResponseJson()), 2);
         self::assertSame($this->getResponseJson()[0]['id'], $this->getFirstOrderId() + 1);
     }
+
+    public function testGetFirstTwoOrdersByTime(): void
+    {
+        $this->addToUrl('?toDate=2021-10-13');
+        $this->checkResponse();
+        self::assertSame(count($this->getResponseJson()), 2);
+        self::assertSame($this->getResponseJson()[0]['id'], $this->getFirstOrderId());
+    }
 }
