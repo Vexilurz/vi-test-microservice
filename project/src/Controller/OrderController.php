@@ -30,7 +30,7 @@ class OrderController extends AbstractController
 
         return $this->json([
             'message' => 'new order created',
-            'id' => $order->getId()
+            'orderId' => $order->getId()
         ]);
     }
 

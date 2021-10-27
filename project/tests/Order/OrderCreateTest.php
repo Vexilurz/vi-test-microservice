@@ -16,6 +16,6 @@ class OrderCreateTest extends VitmBaseWebTestCase
     public function testCreateOrder(): void
     {
         $this->checkResponseWithMessage('new order created');
-        self::assertArrayHasKey('id', $this->getResponseJson());
+        self::assertArrayHasKey('orderId', $this->getResponseJson());
     }
 }

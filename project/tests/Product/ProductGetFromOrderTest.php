@@ -2,11 +2,14 @@
 
 namespace App\Tests\Product;
 
+use App\Tests\Traits\ProductCheckTrait;
 use App\Tests\VitmBaseWebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 class ProductGetFromOrderTest extends VitmBaseWebTestCase
 {
+    use ProductCheckTrait;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -17,10 +20,10 @@ class ProductGetFromOrderTest extends VitmBaseWebTestCase
     {
         $this->addToUrl("/1");
         $this->checkResponse();
-        self::assertSame(count($this->getResponseJson()), 2);
-        $expectedProducts = ['Microphone', 'Guitar'];
-        foreach ($this->getResponseJson() as $product) {
-            self::assertContains($product['name'], $expectedProducts);
+        $products = $this->getResponseJson();
+        self::assertSame(count($products), 2);
+        foreach ($products as $product) {
+            self::assertTrue($this->checkProductInExpected($product, ['Microphone', 'Guitar']));
         }
     }
 
@@ -28,8 +31,9 @@ class ProductGetFromOrderTest extends VitmBaseWebTestCase
     {
         $this->addToUrl("/1?available=1");
         $this->checkResponse();
-        self::assertSame(count($this->getResponseJson()), 1);
-        self::assertSame($this->getResponseJson()[0]['name'], 'Microphone');
+        $products = $this->getResponseJson();
+        self::assertSame(count($products), 1);
+        self::assertTrue($this->checkProductInExpected($products[0], ['Microphone']));
     }
 
     public function testGetProductsFromWrongOrderId(): void
