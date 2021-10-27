@@ -16,7 +16,8 @@ class ProductController extends AbstractController
 {
     private ProductService $service;
 
-    public function __construct(ProductService $service) {
+    public function __construct(ProductService $service)
+    {
         $this->service = $service;
     }
 
@@ -27,8 +28,8 @@ class ProductController extends AbstractController
     {
         try {
             $product = $this->service->add($request);
-        } catch(HttpException $e) {
-            return $this->json(['message'=>$e->getMessage()], $e->getStatusCode());
+        } catch (HttpException $e) {
+            return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
         }
 
         return $this->json([
@@ -44,7 +45,7 @@ class ProductController extends AbstractController
     {
         try {
             $productsSerialized = $this->service->getSerializedProductsFromOrder($request, $orderId);
-        } catch(HttpException $e) {
+        } catch (HttpException $e) {
             return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
         }
 

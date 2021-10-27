@@ -7,6 +7,7 @@ use App\Repository\OrderRepository;
 use App\Service\Payment\PaymentService;
 use App\Service\Payment\Strategy\DummyPaymentStrategy;
 use App\Utils\JsonConverter;
+use DateTimeImmutable;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -27,6 +28,19 @@ class OrderService
         $this->productService = $productService;
     }
 
+    public function create(Request $request): Order
+    {
+        $user = $this->userService->getFromRequest($request);
+
+        return $this->orderRepository->create($user);
+    }
+
+    public function delete(Request $request): void
+    {
+        $order = $this->getFromRequest($request);
+        $this->orderRepository->delete($order);
+    }
+
     public function getFromRequest(Request $request, $checkOwner = true): Order
     {
         $orderId = $request->request->get('orderId', 0);
@@ -40,27 +54,16 @@ class OrderService
                 throw new AccessDeniedHttpException('user is not the owner of the order');
             }
         }
+
         return $order;
-    }
-
-    public function create(Request $request): Order
-    {
-        $user = $this->userService->getFromRequest($request);
-        return $this->orderRepository->create($user);
-    }
-
-    public function delete(Request $request): void
-    {
-        $order = $this->getFromRequest($request);
-        $this->orderRepository->delete($order);
     }
 
     public function getSerializedOrders(Request $request): array
     {
         $fromDate = $request->query->get('fromDate');
         $toDate = $request->query->get('toDate');
-        $fromDate = $fromDate ? new \DateTimeImmutable($fromDate) : (new \DateTimeImmutable())->setTimestamp(0);
-        $toDate = $toDate ? new \DateTimeImmutable($toDate) : (new \DateTimeImmutable('now'));
+        $fromDate = $fromDate ? new DateTimeImmutable($fromDate) : (new DateTimeImmutable())->setTimestamp(0);
+        $toDate = $toDate ? new DateTimeImmutable($toDate) : (new DateTimeImmutable('now'));
         $orders = $this->orderRepository->findOrdersByDate($fromDate, $toDate);
 
         return JsonConverter::getJsonFromEntitiesArray($orders, ['includeUser' => true]);
@@ -70,6 +73,7 @@ class OrderService
     {
         $order = $this->getFromRequest($request);
         $product = $this->productService->getFromRequest($request);
+
         //TODO: check if product available in order?
         return $this->orderRepository->removeProduct($order, $product);
     }
@@ -78,6 +82,7 @@ class OrderService
     {
         $order = $this->getFromRequest($request);
         $product = $this->productService->getFromRequest($request);
+
         return $this->orderRepository->addProduct($order, $product);
     }
 
@@ -86,8 +91,9 @@ class OrderService
         // select payment strategy here
         $paymentService = new PaymentService(new DummyPaymentStrategy());
         $paymentResult = $paymentService->payOrder($order);
+
         //TODO: process if (!$paymentResult)
-        
+
         return $this->orderRepository->setPaid($order, $paymentResult);
     }
 }

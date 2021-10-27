@@ -10,6 +10,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
+use function get_class;
 
 /**
  * @method User|null find($id, $lockMode = null, $lockVersion = null)
@@ -33,7 +34,7 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function upgradePassword(PasswordAuthenticatedUserInterface $user, string $newHashedPassword): void
     {
         if (!$user instanceof User) {
-            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', \get_class($user)));
+            throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', get_class($user)));
         }
 
         $user->setPassword($newHashedPassword);
@@ -41,19 +42,18 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->_em->flush();
     }
 
-    public function findByApiToken(string $apiToken): User {
+    public function findByApiToken(string $apiToken): User
+    {
         $user = $this->findOneBy(['apiToken' => $apiToken]);
-        if (!$user) { throw new NotFoundHttpException('user not found'); }
+        if (!$user) {
+            throw new NotFoundHttpException('user not found');
+        }
+
         return $user;
     }
 
-    public function findByEmail(string $email): User {
-        $user = $this->findOneBy(['email' => $email]);
-        if (!$user) { throw new NotFoundHttpException('user not found'); }
-        return $user;
-    }
-
-    public function create(string $email, string $password): User {
+    public function create(string $email, string $password): User
+    {
         $newUser = new User();
         $newUser->setEmail($email);
         $newUser->setPassword($this->encoder->hashPassword($newUser, $password));
@@ -64,7 +64,8 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $newUser;
     }
 
-    public function login(string $email, string $newApiToken): User {
+    public function login(string $email, string $newApiToken): User
+    {
         $user = $this->findByEmail($email);
         $user->setApiToken($newApiToken);
         $this->_em->flush();
@@ -72,10 +73,22 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $user;
     }
 
-    public function logout(string $email): User {
+    public function findByEmail(string $email): User
+    {
+        $user = $this->findOneBy(['email' => $email]);
+        if (!$user) {
+            throw new NotFoundHttpException('user not found');
+        }
+
+        return $user;
+    }
+
+    public function logout(string $email): User
+    {
         $user = $this->findByEmail($email);
         $user->setApiToken(null);
         $this->_em->flush();
+
         return $user;
     }
 

@@ -5,8 +5,10 @@ namespace App\DataFixtures;
 use App\Entity\Order;
 use App\Entity\Product;
 use App\Entity\User;
+use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
@@ -18,6 +20,15 @@ class AppFixtures extends Fixture
     {
         $this->encoder = $encoder;
         $this->em = $entityManager;
+    }
+
+    public function load(ObjectManager $manager)
+    {
+        $this->prepareUsers();
+        $this->prepareProducts();
+        $this->em->flush();
+        $this->prepareOrders();
+        $this->em->flush();
     }
 
     private function prepareUsers(): void
@@ -54,7 +65,8 @@ class AppFixtures extends Fixture
         }
     }
 
-    private function prepareProducts() {
+    private function prepareProducts()
+    {
         $productsData = [
             [
                 'name' => 'Microphone',
@@ -77,14 +89,15 @@ class AppFixtures extends Fixture
             $newProduct->setName($product['name']);
             $newProduct->setPrice($product['price']);
             $newProduct->setAvailable($product['available']);
-            $dateTime = new \DateTimeImmutable('now');
+            $dateTime = new DateTimeImmutable('now');
             $newProduct->setCreatedAt($dateTime);
             $newProduct->setUpdatedAt($dateTime);
             $this->em->persist($newProduct);
         }
     }
 
-    private function prepareOrders() {
+    private function prepareOrders()
+    {
         $user = $this->em->getRepository(User::class)->findOneBy(['email' => 'test@example.com']);
         $productsRepository = $this->em->getRepository(Product::class);
         $products[] = $productsRepository->findOneBy(['name' => 'Microphone']);
@@ -97,7 +110,7 @@ class AppFixtures extends Fixture
         $newOrder->addProduct($products[0]);
         $newOrder->addProduct($products[1]);
         $newOrder->setTotalPrice($products[0]->getPrice() + $products[1]->getPrice());
-        $dateTime = new \DateTimeImmutable('2021-10-05');
+        $dateTime = new DateTimeImmutable('2021-10-05');
         $newOrder->setCreatedAt($dateTime);
         $newOrder->setUpdatedAt($dateTime);
         $this->em->persist($newOrder);
@@ -106,7 +119,7 @@ class AppFixtures extends Fixture
         $newOrder->setUser($user);
         $newOrder->setPaid(false);
         $newOrder->setTotalPrice(0);
-        $dateTime = new \DateTimeImmutable('2021-10-10');
+        $dateTime = new DateTimeImmutable('2021-10-10');
         $newOrder->setCreatedAt($dateTime);
         $newOrder->setUpdatedAt($dateTime);
         $this->em->persist($newOrder);
@@ -117,18 +130,9 @@ class AppFixtures extends Fixture
         $newOrder->addProduct($products[1]);
         $newOrder->addProduct($products[2]);
         $newOrder->setTotalPrice($products[1]->getPrice() + $products[2]->getPrice());
-        $dateTime = new \DateTimeImmutable('2021-10-15');
+        $dateTime = new DateTimeImmutable('2021-10-15');
         $newOrder->setCreatedAt($dateTime);
         $newOrder->setUpdatedAt($dateTime);
         $this->em->persist($newOrder);
-    }
-
-    public function load(\Doctrine\Persistence\ObjectManager $manager)
-    {
-        $this->prepareUsers();
-        $this->prepareProducts();
-        $this->em->flush();
-        $this->prepareOrders();
-        $this->em->flush();
     }
 }

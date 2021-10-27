@@ -15,20 +15,17 @@ class AuthService
     private TokenGenerator $tokenGenerator;
 
     public function __construct(UserRepository $userRepository,
-                                TokenGenerator $tokenGenerator) {
+                                TokenGenerator $tokenGenerator)
+    {
         $this->userRepository = $userRepository;
         $this->tokenGenerator = $tokenGenerator;
-    }
-
-    public function getApiTokenFromRequest(Request $request): string
-    {
-        return $request->headers->get('X-AUTH-TOKEN');
     }
 
     public function login(Request $request): User
     {
         $email = $request->request->get('email', '');
         $newApiToken = $this->tokenGenerator->getNewApiToken();
+
         return $this->userRepository->login($email, $newApiToken);
     }
 
@@ -42,7 +39,7 @@ class AuthService
         //TODO: add validators
         try {
             $this->userRepository->findByEmail($email);
-        } catch(HttpException $e) {
+        } catch (HttpException $e) {
             return $this->userRepository->create($email, $password);
         }
         throw new BadRequestHttpException('user already exists');
@@ -52,6 +49,12 @@ class AuthService
     {
         $apiToken = $this->getApiTokenFromRequest($request);
         $user = $this->userRepository->findByApiToken($apiToken);
+
         return $this->userRepository->logout($user->getEmail());
+    }
+
+    public function getApiTokenFromRequest(Request $request): string
+    {
+        return $request->headers->get('X-AUTH-TOKEN');
     }
 }

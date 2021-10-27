@@ -15,12 +15,14 @@ class TokenGuardRequestChecker implements RequestCheckerInterface
         $this->requestCheckers[] = $registrationRequestChecker;
     }
 
-    public function isEndpointMatch(Request $request): bool {
+    public function isEndpointMatch(Request $request): bool
+    {
         foreach ($this->requestCheckers as $requestChecker) {
             if ($requestChecker->isEndpointMatch($request)) {
                 return false;
             }
         }
+
         return true;
     }
 }

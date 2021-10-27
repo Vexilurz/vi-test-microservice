@@ -17,9 +17,9 @@ class PaymentService
         $this->paymentStrategy = $paymentStrategy;
     }
 
-    public function payOrder(Order $order): bool {
-        if ($order->getPaid())
-        {
+    public function payOrder(Order $order): bool
+    {
+        if ($order->getPaid()) {
             throw new BadRequestHttpException('order is paid already');
         }
 

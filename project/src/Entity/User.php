@@ -53,23 +53,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonCon
         $this->orders = new ArrayCollection();
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): self
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
     /**
      * A visual identifier that represents this user.
      *
@@ -77,7 +60,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonCon
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**
@@ -85,7 +68,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonCon
      */
     public function getUsername(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**
@@ -190,5 +173,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonCon
             'userId' => $this->getId(),
             'email' => $this->getEmail()
         ];
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
     }
 }

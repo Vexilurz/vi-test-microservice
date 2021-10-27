@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Order;
 use App\Entity\Product;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -20,16 +21,18 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-    public function add(string $name, float $price): Product {
+    public function add(string $name, float $price): Product
+    {
         $newProduct = new Product();
         $newProduct->setName($name);
         $newProduct->setPrice($price);
-        $datetime = new \DateTimeImmutable('now');
+        $datetime = new DateTimeImmutable('now');
         $newProduct->setCreatedAt($datetime);
         $newProduct->setUpdatedAt($datetime);
         $newProduct->setAvailable(true);
         $this->_em->persist($newProduct);
         $this->_em->flush();
+
         return $newProduct;
     }
 
@@ -48,7 +51,7 @@ class ProductRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('p')
             ->innerJoin('p.orders', 'o', 'WITH', 'o = :order')
             ->andWhere('p.available = :available')
-            ->setParameters(['order'=>$order, 'available'=>true])
+            ->setParameters(['order' => $order, 'available' => true])
             ->getQuery()
             ->getResult();
     }

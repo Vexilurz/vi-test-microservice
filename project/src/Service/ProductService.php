@@ -16,7 +16,8 @@ class ProductService
     private OrderRepository $orderRepository;
 
     public function __construct(ProductRepository $productRepository,
-                                OrderRepository $orderRepository) {
+                                OrderRepository $orderRepository)
+    {
         $this->productRepository = $productRepository;
         $this->orderRepository = $orderRepository;
     }
@@ -32,12 +33,14 @@ class ProductService
         return $this->productRepository->add($name, $price);
     }
 
-    public function getFromRequest(Request $request): Product {
+    public function getFromRequest(Request $request): Product
+    {
         $productId = $request->request->get('productId', 0);
         $product = $this->productRepository->find($productId);
         if (!$product) {
             throw new NotFoundHttpException('product not found');
         }
+
         return $product;
     }
 
@@ -52,6 +55,7 @@ class ProductService
         $products = $available ?
             $this->productRepository->findAvailableInOrder($order) :
             $order->getProducts()->getValues();
+
         return JsonConverter::getJsonFromEntitiesArray($products);
     }
 }

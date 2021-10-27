@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Service\OrderService;
-use App\Service\Payment\PaymentService;
 use App\Service\Payment\DummyPaymentService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,7 +17,8 @@ class OrderController extends AbstractController
 {
     private OrderService $service;
 
-    public function __construct(OrderService $service) {
+    public function __construct(OrderService $service)
+    {
         $this->service = $service;
     }
 
@@ -43,7 +43,7 @@ class OrderController extends AbstractController
         try {
             $this->service->delete($request);
         } catch (HttpException $e) {
-            return $this->json(['message'=>$e->getMessage()], $e->getStatusCode());
+            return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
         }
 
         return $this->json([
@@ -59,9 +59,10 @@ class OrderController extends AbstractController
         try {
             $this->service->addProduct($request);
         } catch (HttpException $e) {
-            return $this->json(['message'=>$e->getMessage()], $e->getStatusCode());
+            return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
         }
-        return $this->json(['message'=>'product added to the order']);
+
+        return $this->json(['message' => 'product added to the order']);
     }
 
     /**
@@ -72,9 +73,10 @@ class OrderController extends AbstractController
         try {
             $this->service->removeProduct($request);
         } catch (HttpException $e) {
-            return $this->json(['message'=>$e->getMessage()], $e->getStatusCode());
+            return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
         }
-        return $this->json(['message'=>'product removed from the order']);
+
+        return $this->json(['message' => 'product removed from the order']);
     }
 
     /**
