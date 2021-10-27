@@ -2,53 +2,70 @@
 
 namespace App\Tests\User;
 
+use App\Tests\Traits\OrderCheckTrait;
+use App\Tests\Traits\ProductCheckTrait;
 use App\Tests\VitmBaseWebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
 class UserGetOrdersTest extends VitmBaseWebTestCase
 {
+    use ProductCheckTrait;
+    use OrderCheckTrait;
+
     public function setUp(): void
     {
         parent::setUp();
         $this->setUrl('/user/get_orders');
     }
 
-    private function checkExpectedProducts($order, array $expectedProducts = []) {
+    private function checkExpectedProductsInOrder($order, array $expectedProducts = []): void {
+        self::assertTrue($this->checkOrderHaveFields($order), 'Order do not have expected fields');
         if (count($expectedProducts) > 0) {
             foreach ($order['products'] as $product) {
-                self::assertContains($product['name'], $expectedProducts);
+                self::assertTrue($this->checkProductInExpected($product, $expectedProducts));
             }
         } else {
             self::assertSame(count($order['products']), 0);
         }
     }
 
-    private function checkReceivedOrders() {
-        self::assertSame(count($this->getResponseJson()), 3);
-        $this->checkExpectedProducts($this->getResponseJson()[0], ['Microphone', 'Guitar']);
-        $this->checkExpectedProducts($this->getResponseJson()[1]);
-        $this->checkExpectedProducts($this->getResponseJson()[2], ['Keyboard', 'Guitar']);
+    private function checkUser1ReceivedOrders() {
+        $orders = $this->getResponseJson();
+        self::assertSame(count($orders), 3);
+        $this->checkExpectedProductsInOrder($orders[0], ['Microphone', 'Guitar']);
+        $this->checkExpectedProductsInOrder($orders[1]);
+        $this->checkExpectedProductsInOrder($orders[2], ['Keyboard', 'Guitar']);
     }
 
     public function testGetUserOrdersFromApiToken(): void
     {
         $this->checkResponse();
-        $this->checkReceivedOrders();
+        $this->checkUser1ReceivedOrders();
     }
 
     public function testGetUserPaidOrdersFromApiToken(): void
     {
         $this->addToUrl('?paid=1');
         $this->checkResponse();
-        self::assertSame(count($this->getResponseJson()), 1);
-        $this->checkExpectedProducts($this->getResponseJson()[0], ['Microphone', 'Guitar']);
+        $orders = $this->getResponseJson();
+        self::assertSame(count($orders), 1);
+        $this->checkExpectedProductsInOrder($orders[0], ['Microphone', 'Guitar']);
     }
 
-    public function testGetUserOrdersFromUserId(): void
+    public function testGetUserOrdersFromUserId1(): void
     {
         $this->addToUrl("/1");
         $this->checkResponse();
-        $this->checkReceivedOrders();
+        $this->checkUser1ReceivedOrders();
+    }
+
+    public function testGetUserOrdersFromUserId2(): void
+    {
+        $this->addToUrl("/2");
+        $this->checkResponse();
+        $orders = $this->getResponseJson();
+        self::assertSame(count($orders), 1);
+        $this->checkExpectedProductsInOrder($orders[0], ['Microphone', 'Keyboard']);
     }
 
     public function testGetUserOrdersFromInvalidUserId(): void

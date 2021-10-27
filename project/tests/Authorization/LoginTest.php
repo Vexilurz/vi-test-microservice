@@ -17,7 +17,8 @@ class LoginTest extends VitmAuthWebTestCase
     public function testLogin(): void
     {
         $this->setBody(['email'=>'user@example.com','password'=>'123456']);
-        $this->checkResponseWithApiToken('login success');
+        $this->checkResponseWithMessage('login success');
+        self::assertArrayHasKey('apiToken', $this->getResponseJson());
     }
 
     public function testLoginNonExistentEmail(): void

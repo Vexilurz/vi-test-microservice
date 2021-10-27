@@ -16,7 +16,7 @@ class ProductAddTest extends VitmBaseWebTestCase
 
     private function checkAddedProduct() {
         $this->checkResponseWithMessage('product added');
-        self::assertArrayHasKey('id', $this->getResponseJson());
+        self::assertArrayHasKey('productId', $this->getResponseJson());
     }
 
     public function testAdd(): void
