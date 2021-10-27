@@ -6,7 +6,10 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
- * @ORM\Table(name="order_product")
+ * @ORM\Table(name="order_product",
+ *    uniqueConstraints={
+ *        @ORM\UniqueConstraint(name="order_product_unique", columns={"order_id", "product_id"})
+ *    })
  */
 class OrderProduct
 {
