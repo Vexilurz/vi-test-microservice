@@ -100,11 +100,13 @@ class AppFixtures extends Fixture
 
     private function prepareOrders()
     {
-        $user = $this->em->getRepository(User::class)->findOneBy(['email' => 'test@example.com']);
         $productsRepository = $this->em->getRepository(Product::class);
         $products[] = $productsRepository->findOneBy(['name' => 'Microphone']);
         $products[] = $productsRepository->findOneBy(['name' => 'Guitar']);
         $products[] = $productsRepository->findOneBy(['name' => 'Keyboard']);
+
+        $user = $this->em->getRepository(User::class)->findByEmail('test@example.com');
+        $user2 = $this->em->getRepository(User::class)->findByEmail('test2@example.com');
 
         $dateTime = new DateTimeImmutable('2021-10-05');
         $newOrder = new Order();
@@ -136,6 +138,18 @@ class AppFixtures extends Fixture
             ->addProduct($products[1])
             ->addProduct($products[2])
             ->setTotalPrice($products[1]->getPrice() + $products[2]->getPrice())
+            ->setCreatedAt($dateTime)
+            ->setUpdatedAt($dateTime);
+        $this->em->persist($newOrder);
+
+        $dateTime = new DateTimeImmutable('2021-10-20');
+        $newOrder = new Order();
+        $newOrder
+            ->setUser($user2)
+            ->setPaid(true)
+            ->addProduct($products[0])
+            ->addProduct($products[2])
+            ->setTotalPrice($products[0]->getPrice() + $products[2]->getPrice())
             ->setCreatedAt($dateTime)
             ->setUpdatedAt($dateTime);
         $this->em->persist($newOrder);
