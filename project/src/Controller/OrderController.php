@@ -3,7 +3,7 @@
 namespace App\Controller;
 
 use App\Service\OrderService;
-use App\Service\Payment\AbstractPaymentService;
+use App\Service\Payment\PaymentService;
 use App\Service\Payment\DummyPaymentService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -17,11 +17,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class OrderController extends AbstractController
 {
     private OrderService $service;
-    private AbstractPaymentService $paymentService;
 
-    public function __construct(OrderService $service, DummyPaymentService $paymentService) {
+    public function __construct(OrderService $service) {
         $this->service = $service;
-        $this->paymentService = $paymentService;
     }
 
     /**
@@ -86,7 +84,7 @@ class OrderController extends AbstractController
     {
         try {
             $order = $this->service->getFromRequest($request);
-            $this->paymentService->payOrder($order);
+            $this->service->payOrder($order);
         } catch (HttpException $e) {
             return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
         }
