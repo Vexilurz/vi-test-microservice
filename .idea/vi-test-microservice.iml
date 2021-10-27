@@ -156,6 +156,7 @@
       <excludeFolder url="file://$MODULE_DIR$/project/vendor/symfony/expression-language" />
       <excludeFolder url="file://$MODULE_DIR$/project/vendor/symfony/validator" />
       <excludeFolder url="file://$MODULE_DIR$/project/vendor/bin/.phpunit" />
+      <excludeFolder url="file://$MODULE_DIR$/project/vendor/liip/test-fixtures-bundle" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

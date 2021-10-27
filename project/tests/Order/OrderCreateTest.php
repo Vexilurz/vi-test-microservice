@@ -2,10 +2,9 @@
 
 namespace App\Tests\Order;
 
-use App\Entity\Order;
-use App\Tests\VitmWithIdsWebTestCase;
+use App\Tests\VitmBaseWebTestCase;
 
-class OrderCreateTest extends VitmWithIdsWebTestCase
+class OrderCreateTest extends VitmBaseWebTestCase
 {
     public function setUp(): void
     {
@@ -18,14 +17,5 @@ class OrderCreateTest extends VitmWithIdsWebTestCase
     {
         $this->checkResponseWithMessage('new order created');
         self::assertArrayHasKey('id', $this->getResponseJson());
-
-        try {
-            $id = $this->getResponseJson()['id'];
-            $repository = $this->getEntityManager()->getRepository(Order::class);
-            $order = $repository->find($id);
-            $repository->delete($order);
-        } catch(\Exception $e) {
-            $this->selfFail($e);
-        }
     }
 }

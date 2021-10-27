@@ -16,7 +16,8 @@ abstract class RequestChecker implements RequestCheckerInterface
         $this->routeName = $routeName;
     }
 
-    public function isEndpointMatch(Request $request): bool {
+    public function isEndpointMatch(Request $request): bool
+    {
         return $request->isMethod('POST') && $this->getLoginUrl($this->routeName) === $request->getPathInfo();
     }
 

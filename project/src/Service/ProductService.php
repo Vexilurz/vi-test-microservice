@@ -5,9 +5,9 @@ namespace App\Service;
 use App\Entity\Product;
 use App\Repository\OrderRepository;
 use App\Repository\ProductRepository;
-use App\Utils\Serializer;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use App\Utils\JsonConverter;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class ProductService
@@ -16,7 +16,8 @@ class ProductService
     private OrderRepository $orderRepository;
 
     public function __construct(ProductRepository $productRepository,
-                                OrderRepository $orderRepository) {
+                                OrderRepository $orderRepository)
+    {
         $this->productRepository = $productRepository;
         $this->orderRepository = $orderRepository;
     }
@@ -26,18 +27,20 @@ class ProductService
         $name = $request->request->get('name', '');
         $price = $request->request->get('price', 0);
         if (!$name) {
-            throw new BadRequestException('name is empty');
+            throw new BadRequestHttpException('name is empty');
         }
 
         return $this->productRepository->add($name, $price);
     }
 
-    public function getFromRequest(Request $request): Product {
+    public function getFromRequest(Request $request): Product
+    {
         $productId = $request->request->get('productId', 0);
         $product = $this->productRepository->find($productId);
         if (!$product) {
             throw new NotFoundHttpException('product not found');
         }
+
         return $product;
     }
 
@@ -49,7 +52,10 @@ class ProductService
         }
 
         $available = $request->query->get('available');
-        $products = $available ? $this->productRepository->findAvailableInOrder($order) : $order->getProducts();
-        return Serializer::getSerializedFromArray($products);
+        $products = $available ?
+            $this->productRepository->findAvailableInOrder($order) :
+            $order->getProducts()->getValues();
+
+        return JsonConverter::getJsonFromEntitiesArray($products);
     }
 }

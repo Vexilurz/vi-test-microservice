@@ -6,9 +6,15 @@ namespace App\Tests;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
+use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
+use Liip\TestFixturesBundle\Services\DatabaseTools\AbstractDatabaseTool;
+use App\DataFixtures\AppFixtures;
 
 abstract class VitmBaseWebTestCase extends WebTestCase
 {
+    /** @var AbstractDatabaseTool */
+    protected $databaseTool;
+
     private string $_method;
     private string $_url;
     private array $_body;
@@ -20,9 +26,13 @@ abstract class VitmBaseWebTestCase extends WebTestCase
 
     public function setUp(): void
     {
+        parent::setUp();
         $this->setDefaults();
         $this->_client = static::createClient();
         $this->_em = $this->_client->getContainer()->get('doctrine.orm.entity_manager');
+
+        $this->databaseTool = $this->_client->getContainer()->get(DatabaseToolCollection::class)->get();
+        $this->databaseTool->loadFixtures([AppFixtures::class]);
     }
 
     private function setDefaults(): void {

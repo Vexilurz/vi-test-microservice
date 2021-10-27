@@ -5,9 +5,9 @@ networks:
 
 services:
 
-  nginx:
+  vitm-nginx:
     image: nginx:stable-alpine
-    container_name: nginx
+    container_name: vitm-nginx
     ports:
       - "${NGINX_PORT}:80"
     volumes:
@@ -15,16 +15,16 @@ services:
       - ./nginx/conf.d:/etc/nginx/conf.d
       - ./nginx/logs:/var/log/nginx/
     depends_on:
-      - php
-      - mysql
+      - vitm-php
+      - vitm-mysql
     environment:
       TZ: ${WORKSPACE_TIMEZONE}
     networks:
       - backend
 
-  mysql:
+  vitm-mysql:
     image: mysql:5.7
-    container_name: mysql
+    container_name: vitm-mysql
     command: --default-authentication-plugin=mysql_native_password
     restart: unless-stopped
     volumes:
@@ -45,7 +45,7 @@ services:
     networks:
       - backend
 
-  php:
+  vitm-php:
     build:
       context: .
       dockerfile: Dockerfile
@@ -56,7 +56,7 @@ services:
         XDEBUG_TARGET_PORT: ${XDEBUG_TARGET_PORT}
         TZ: ${WORKSPACE_TIMEZONE}
     working_dir: /var/www
-    container_name: php
+    container_name: vitm-php
     volumes:
       - ./.ssh:/home/www-data/.ssh
       - ./project:/var/www

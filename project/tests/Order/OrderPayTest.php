@@ -2,10 +2,10 @@
 
 namespace App\Tests\Order;
 
-use App\Tests\VitmWithIdsWebTestCase;
+use App\Tests\VitmBaseWebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
-class OrderPayTest extends VitmWithIdsWebTestCase
+class OrderPayTest extends VitmBaseWebTestCase
 {
     public function setUp(): void
     {
@@ -16,14 +16,21 @@ class OrderPayTest extends VitmWithIdsWebTestCase
 
     public function testPay(): void
     {
-        $this->setBody(['orderId'=>$this->getFirstOrderId()]);
+        $this->setBody(['orderId'=>2]);
         $this->checkResponseWithMessage('order has been paid');
+    }
+
+    public function testPaidAlready(): void
+    {
+        $this->setBody(['orderId'=>1]);
+        $this->setResponseCode(Response::HTTP_BAD_REQUEST);
+        $this->checkResponseWithMessage('order is paid already');
     }
 
     public function testPayNotOwner(): void
     {
         $this->setNotOwnerApiToken();
-        $this->setBody(['orderId'=>$this->getFirstOrderId()]);
+        $this->setBody(['orderId'=>1]);
         $this->setResponseCode(Response::HTTP_FORBIDDEN);
         $this->checkResponseWithMessage('user is not the owner of the order');
     }

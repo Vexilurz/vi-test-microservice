@@ -3,7 +3,9 @@
 namespace App\Entity;
 
 use App\Repository\OrderRepository;
-use App\Utils\Serializer;
+use App\Utils\JsonConverter;
+use App\Utils\JsonConverterInterface;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,7 +14,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity(repositoryClass=OrderRepository::class)
  * @ORM\Table(name="`order`")
  */
-class Order
+class Order implements JsonConverterInterface
 {
     /**
      * @ORM\Id
@@ -56,67 +58,6 @@ class Order
         $this->products = new ArrayCollection();
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    public function getPaid(): ?bool
-    {
-        return $this->paid;
-    }
-
-    public function setPaid(bool $paid): self
-    {
-        $this->paid = $paid;
-
-        return $this;
-    }
-
-    public function getCreatedAt(): ?\DateTimeImmutable
-    {
-        return $this->createdAt;
-    }
-
-    public function setCreatedAt(\DateTimeImmutable $createdAt): self
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    public function getUpdatedAt(): ?\DateTimeImmutable
-    {
-        return $this->updatedAt;
-    }
-
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Product[]
-     */
-    public function getProducts(): Collection
-    {
-        return $this->products;
-    }
-
     public function addProduct(Product $product): self
     {
         if (!$this->products->contains($product)) {
@@ -133,6 +74,50 @@ class Order
         return $this;
     }
 
+    public function getJsonArray(array $options = []): array
+    {
+        $products = $this->getProducts()->getValues();
+        $productsSerialized = JsonConverter::getJsonFromEntitiesArray($products);
+        $result = [
+            'orderId' => $this->getId(),
+            'paid' => $this->getPaid(),
+            'totalPrice' => $this->getTotalPrice(),
+            'products' => $productsSerialized,
+            'createdAt' => $this->getCreatedAt()->getTimestamp(),
+            'updatedAt' => $this->getUpdatedAt()->getTimestamp()
+        ];
+        if (array_key_exists('includeUser', $options) && $options['includeUser']) {
+            $result['user'] = $this->getUser()->getJsonArray();
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return Collection|Product[]
+     */
+    public function getProducts(): Collection
+    {
+        return $this->products;
+    }
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getPaid(): ?bool
+    {
+        return $this->paid;
+    }
+
+    public function setPaid(bool $paid): self
+    {
+        $this->paid = $paid;
+
+        return $this;
+    }
+
     public function getTotalPrice(): ?float
     {
         return $this->totalPrice;
@@ -145,22 +130,39 @@ class Order
         return $this;
     }
 
-    public function getSerialized(array $options = []): array
+    public function getCreatedAt(): ?DateTimeImmutable
     {
-        $products = $this->getProducts();
-        $productsSerialized = Serializer::getSerializedFromArray($products);
-        $result = [
-            'id' => $this->getId(),
-            'paid' => $this->getPaid(),
-            'totalPrice' => $this->getTotalPrice(),
-            'products' => $productsSerialized,
-            'createdAt' => $this->getCreatedAt()->getTimestamp(),
-            'updatedAt' => $this->getUpdatedAt()->getTimestamp()
-        ];
-        if (array_key_exists('includeUser', $options) && $options['includeUser']) {
-            $result['user'] = $this->getUser()->getSerialized();
-        }
+        return $this->createdAt;
+    }
 
-        return $result;
+    public function setCreatedAt(DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
     }
 }

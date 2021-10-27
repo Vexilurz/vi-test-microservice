@@ -2,37 +2,20 @@
 
 namespace App\Controller;
 
-use App\Service\UserService;
+use App\Service\AuthService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 
 class AuthController extends AbstractController
 {
-    private UserService $userService;
+    private AuthService $authService;
 
-    public function __construct(UserService $userService)
+    public function __construct(AuthService $authService)
     {
-        $this->userService = $userService;
-    }
-
-    // name="app_login" must match with LoginRequestChecker LOGIN_ROUTE constant
-    // guards by LoginAuthenticator
-    /**
-     * @Route("/login", name="app_login", methods={"POST"})
-     */
-    public function login(Request $request): Response
-    {
-        $user = $this->userService->login($request);
-
-        return $this->json([
-            'message' => 'login success',
-            'apiToken' => $user->getApiToken()
-        ]);
+        $this->authService = $authService;
     }
 
     // name="app_login" must match with RegistrationRequestChecker REGISTRATION_ROUTE constant
@@ -43,13 +26,31 @@ class AuthController extends AbstractController
     public function register(Request $request): Response
     {
         try {
-            $user = $this->userService->register($request);
-        } catch (BadRequestException $e) {
-            return $this->json(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            $user = $this->authService->register($request);
+        } catch (HttpException $e) {
+            return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
         }
 
         return $this->json([
-            'message' => 'registration success',
+            'message' => 'registration success'
+        ]);
+    }
+
+    // name="app_login" must match with LoginRequestChecker LOGIN_ROUTE constant
+    // guards by LoginAuthenticator
+    /**
+     * @Route("/login", name="app_login", methods={"POST"})
+     */
+    public function login(Request $request): Response
+    {
+        try {
+            $user = $this->authService->login($request);
+        } catch (HttpException $e) {
+            return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
+        }
+
+        return $this->json([
+            'message' => 'login success',
             'apiToken' => $user->getApiToken()
         ]);
     }
@@ -59,7 +60,11 @@ class AuthController extends AbstractController
      */
     public function logout(Request $request): Response
     {
-        $user = $this->userService->logout($request);
+        try {
+            $user = $this->authService->logout($request);
+        } catch (HttpException $e) {
+            return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
+        }
 
         return $this->json([
             'message' => 'logout success'

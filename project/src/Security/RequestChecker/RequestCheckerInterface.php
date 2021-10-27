@@ -4,6 +4,7 @@ namespace App\Security\RequestChecker;
 
 use Symfony\Component\HttpFoundation\Request;
 
-interface RequestCheckerInterface {
+interface RequestCheckerInterface
+{
     public function isEndpointMatch(Request $request): bool;
 }

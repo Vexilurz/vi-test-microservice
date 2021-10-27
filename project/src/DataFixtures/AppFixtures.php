@@ -5,8 +5,10 @@ namespace App\DataFixtures;
 use App\Entity\Order;
 use App\Entity\Product;
 use App\Entity\User;
+use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
@@ -18,6 +20,15 @@ class AppFixtures extends Fixture
     {
         $this->encoder = $encoder;
         $this->em = $entityManager;
+    }
+
+    public function load(ObjectManager $manager)
+    {
+        $this->prepareUsers();
+        $this->prepareProducts();
+        $this->em->flush();
+        $this->prepareOrders();
+        $this->em->flush();
     }
 
     private function prepareUsers(): void
@@ -46,15 +57,17 @@ class AppFixtures extends Fixture
         ];
         foreach ($usersData as $user) {
             $newUser = new User();
-            $newUser->setEmail($user['email']);
-            $newUser->setPassword($this->encoder->hashPassword($newUser, $user['password']));
-            $newUser->setRoles(['ROLE_USER']);
-            $newUser->setApiToken($user['apiToken']);
+            $newUser
+                ->setEmail($user['email'])
+                ->setPassword($this->encoder->hashPassword($newUser, $user['password']))
+                ->setRoles(['ROLE_USER'])
+                ->setApiToken($user['apiToken']);
             $this->em->persist($newUser);
         }
     }
 
-    private function prepareProducts() {
+    private function prepareProducts()
+    {
         $productsData = [
             [
                 'name' => 'Microphone',
@@ -73,62 +86,58 @@ class AppFixtures extends Fixture
             ],
         ];
         foreach ($productsData as $product) {
+            $dateTime = new DateTimeImmutable('now');
             $newProduct = new Product();
-            $newProduct->setName($product['name']);
-            $newProduct->setPrice($product['price']);
-            $newProduct->setAvailable($product['available']);
-            $dateTime = new \DateTimeImmutable('now');
-            $newProduct->setCreatedAt($dateTime);
-            $newProduct->setUpdatedAt($dateTime);
+            $newProduct
+                ->setName($product['name'])
+                ->setPrice($product['price'])
+                ->setAvailable($product['available'])
+                ->setCreatedAt($dateTime)
+                ->setUpdatedAt($dateTime);
             $this->em->persist($newProduct);
         }
     }
 
-    private function prepareOrders() {
+    private function prepareOrders()
+    {
         $user = $this->em->getRepository(User::class)->findOneBy(['email' => 'test@example.com']);
         $productsRepository = $this->em->getRepository(Product::class);
         $products[] = $productsRepository->findOneBy(['name' => 'Microphone']);
         $products[] = $productsRepository->findOneBy(['name' => 'Guitar']);
         $products[] = $productsRepository->findOneBy(['name' => 'Keyboard']);
 
+        $dateTime = new DateTimeImmutable('2021-10-05');
         $newOrder = new Order();
-        $newOrder->setUser($user);
-        $newOrder->setPaid(true);
-        $newOrder->addProduct($products[0]);
-        $newOrder->addProduct($products[1]);
-        $newOrder->setTotalPrice($products[0]->getPrice() + $products[1]->getPrice());
-        $dateTime = new \DateTimeImmutable('2021-10-05');
-        $newOrder->setCreatedAt($dateTime);
-        $newOrder->setUpdatedAt($dateTime);
+        $newOrder
+            ->setUser($user)
+            ->setPaid(true)
+            ->addProduct($products[0])
+            ->addProduct($products[1])
+            ->setTotalPrice($products[0]->getPrice() + $products[1]->getPrice())
+            ->setCreatedAt($dateTime)
+            ->setUpdatedAt($dateTime);
         $this->em->persist($newOrder);
 
+        $dateTime = new DateTimeImmutable('2021-10-10');
         $newOrder = new Order();
-        $newOrder->setUser($user);
-        $newOrder->setPaid(false);
-        $newOrder->setTotalPrice(0);
-        $dateTime = new \DateTimeImmutable('2021-10-10');
-        $newOrder->setCreatedAt($dateTime);
-        $newOrder->setUpdatedAt($dateTime);
+        $newOrder
+            ->setUser($user)
+            ->setPaid(false)
+            ->setTotalPrice(0)
+            ->setCreatedAt($dateTime)
+            ->setUpdatedAt($dateTime);
         $this->em->persist($newOrder);
 
+        $dateTime = new DateTimeImmutable('2021-10-15');
         $newOrder = new Order();
-        $newOrder->setUser($user);
-        $newOrder->setPaid(false);
-        $newOrder->addProduct($products[1]);
-        $newOrder->addProduct($products[2]);
-        $newOrder->setTotalPrice($products[1]->getPrice() + $products[2]->getPrice());
-        $dateTime = new \DateTimeImmutable('2021-10-15');
-        $newOrder->setCreatedAt($dateTime);
-        $newOrder->setUpdatedAt($dateTime);
+        $newOrder
+            ->setUser($user)
+            ->setPaid(false)
+            ->addProduct($products[1])
+            ->addProduct($products[2])
+            ->setTotalPrice($products[1]->getPrice() + $products[2]->getPrice())
+            ->setCreatedAt($dateTime)
+            ->setUpdatedAt($dateTime);
         $this->em->persist($newOrder);
-    }
-
-    public function load(\Doctrine\Persistence\ObjectManager $manager)
-    {
-        $this->prepareUsers();
-        $this->prepareProducts();
-        $this->em->flush();
-        $this->prepareOrders();
-        $this->em->flush();
     }
 }

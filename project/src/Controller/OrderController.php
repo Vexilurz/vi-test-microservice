@@ -16,7 +16,8 @@ class OrderController extends AbstractController
 {
     private OrderService $service;
 
-    public function __construct(OrderService $service) {
+    public function __construct(OrderService $service)
+    {
         $this->service = $service;
     }
 
@@ -41,7 +42,7 @@ class OrderController extends AbstractController
         try {
             $this->service->delete($request);
         } catch (HttpException $e) {
-            return $this->json(['message'=>$e->getMessage()], $e->getStatusCode());
+            return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
         }
 
         return $this->json([
@@ -57,9 +58,10 @@ class OrderController extends AbstractController
         try {
             $this->service->addProduct($request);
         } catch (HttpException $e) {
-            return $this->json(['message'=>$e->getMessage()], $e->getStatusCode());
+            return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
         }
-        return $this->json(['message'=>'product added to the order']);
+
+        return $this->json(['message' => 'product added to the order']);
     }
 
     /**
@@ -70,9 +72,10 @@ class OrderController extends AbstractController
         try {
             $this->service->removeProduct($request);
         } catch (HttpException $e) {
-            return $this->json(['message'=>$e->getMessage()], $e->getStatusCode());
+            return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
         }
-        return $this->json(['message'=>'product removed from the order']);
+
+        return $this->json(['message' => 'product removed from the order']);
     }
 
     /**
@@ -82,12 +85,10 @@ class OrderController extends AbstractController
     {
         try {
             $order = $this->service->getFromRequest($request);
-        }
-        catch (HttpException $e) {
+            $this->service->payOrder($order);
+        } catch (HttpException $e) {
             return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
         }
-
-        $this->service->setPaid($order, true);
 
         return $this->json([
             'message' => 'order has been paid',

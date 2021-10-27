@@ -2,7 +2,6 @@
 
 namespace App\Tests\Product;
 
-use App\Entity\Product;
 use App\Tests\VitmBaseWebTestCase;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -18,15 +17,6 @@ class ProductAddTest extends VitmBaseWebTestCase
     private function checkAddedProduct() {
         $this->checkResponseWithMessage('product added');
         self::assertArrayHasKey('id', $this->getResponseJson());
-
-        try {
-            $id = $this->getResponseJson()['id'];
-            $this->getEntityManager()
-                ->getRepository(Product::class)
-                ->delete($id);
-        } catch(\Exception $e) {
-            $this->selfFail($e);
-        }
     }
 
     public function testAdd(): void

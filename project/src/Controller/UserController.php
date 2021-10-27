@@ -16,7 +16,8 @@ class UserController extends AbstractController
 {
     private UserService $service;
 
-    public function __construct(UserService $service) {
+    public function __construct(UserService $service)
+    {
         $this->service = $service;
     }
 
@@ -26,6 +27,7 @@ class UserController extends AbstractController
     public function getOrders(Request $request): Response
     {
         $ordersSerialized = $this->service->getSerializedOrders($request);
+
         return $this->json($ordersSerialized);
     }
 
@@ -39,6 +41,7 @@ class UserController extends AbstractController
         } catch (HttpException $e) {
             return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
         }
+
         return $this->json($ordersSerialized);
     }
 }

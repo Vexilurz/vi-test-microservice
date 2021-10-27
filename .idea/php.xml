@@ -152,18 +152,19 @@
       <path value="$PROJECT_DIR$/project/vendor/symfony/expression-language" />
       <path value="$PROJECT_DIR$/project/vendor/symfony/validator" />
       <path value="$PROJECT_DIR$/project/vendor/bin/.phpunit" />
+      <path value="$PROJECT_DIR$/project/vendor/liip/test-fixtures-bundle" />
     </include_path>
   </component>
   <component name="PhpInterpreters">
     <interpreters>
-      <interpreter id="4f35798f-21fa-4584-b8a3-b23cb90b2c4d" name="vi-test-microservice_php:latest" home="docker://DATA" debugger_id="php.debugger.XDebug">
-        <remote_data INTERPRETER_PATH="php" HELPERS_PATH="/opt/.phpstorm_helpers" INITIALIZED="false" VALID="true" RUN_AS_ROOT_VIA_SUDO="false" DOCKER_ACCOUNT_NAME="Docker" DOCKER_IMAGE_NAME="vi-test-microservice_php:latest" DOCKER_REMOTE_PROJECT_PATH="/opt/project" />
+      <interpreter id="4f35798f-21fa-4584-b8a3-b23cb90b2c4d" name="vi-test-microservice_vitm-php:latest" home="docker://DATA" debugger_id="php.debugger.XDebug">
+        <remote_data INTERPRETER_PATH="php" HELPERS_PATH="/opt/.phpstorm_helpers" INITIALIZED="false" VALID="true" RUN_AS_ROOT_VIA_SUDO="false" DOCKER_ACCOUNT_NAME="Docker" DOCKER_IMAGE_NAME="vi-test-microservice_vitm-php:latest" DOCKER_REMOTE_PROJECT_PATH="/opt/project" />
       </interpreter>
     </interpreters>
   </component>
   <component name="PhpInterpretersPhpInfoCache">
     <phpInfoCache>
-      <interpreter name="vi-test-microservice_php:latest">
+      <interpreter name="vi-test-microservice_vitm-php:latest">
         <phpinfo binary_type="PHP" php_cli="/usr/local/bin/php" path_separator=":" version="7.4.24">
           <additional_php_ini>/usr/local/etc/php/conf.d/docker-php-ext-bcmath.ini, /usr/local/etc/php/conf.d/docker-php-ext-calendar.ini, /usr/local/etc/php/conf.d/docker-php-ext-exif.ini, /usr/local/etc/php/conf.d/docker-php-ext-gd.ini, /usr/local/etc/php/conf.d/docker-php-ext-gettext.ini, /usr/local/etc/php/conf.d/docker-php-ext-intl.ini, /usr/local/etc/php/conf.d/docker-php-ext-mysqli.ini, /usr/local/etc/php/conf.d/docker-php-ext-opcache.ini, /usr/local/etc/php/conf.d/docker-php-ext-pcntl.ini, /usr/local/etc/php/conf.d/docker-php-ext-pdo_mysql.ini, /usr/local/etc/php/conf.d/docker-php-ext-soap.ini, /usr/local/etc/php/conf.d/docker-php-ext-sodium.ini, /usr/local/etc/php/conf.d/docker-php-ext-xsl.ini, /usr/local/etc/php/conf.d/docker-php-ext-zip.ini, /usr/local/etc/php/conf.d/xdebug.ini</additional_php_ini>
           <configuration_file />
@@ -227,6 +228,16 @@
         </phpinfo>
       </interpreter>
     </phpInfoCache>
+  </component>
+  <component name="PhpProjectServersManager">
+    <servers>
+      <server host="vitm.localhost" id="b1a173cb-8b6e-4027-b29e-79054614a2f0" name="vitm.localhost" port="9001" use_path_mappings="true">
+        <path_mappings>
+          <mapping local-root="$PROJECT_DIR$/project" remote-root="/var/www" />
+          <mapping local-root="$PROJECT_DIR$/project/public" remote-root="/var/www/public" />
+        </path_mappings>
+      </server>
+    </servers>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.4">
     <option name="suggestChangeDefaultLanguageLevel" value="false" />

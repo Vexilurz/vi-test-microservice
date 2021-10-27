@@ -5,6 +5,7 @@ namespace App\Repository;
 use App\Entity\Order;
 use App\Entity\Product;
 use App\Entity\User;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -21,43 +22,56 @@ class OrderRepository extends ServiceEntityRepository
         parent::__construct($registry, Order::class);
     }
 
-    public function create(User $user): Order {
+    public function create(User $user): Order
+    {
+        $datetime = new DateTimeImmutable('now');
         $newOrder = new Order();
-        $newOrder->setUser($user);
-        $newOrder->setTotalPrice(0);
-        $newOrder->setPaid(false);
-        $datetime = new \DateTimeImmutable('now');
-        $newOrder->setCreatedAt($datetime);
-        $newOrder->setUpdatedAt($datetime);
+        $newOrder
+            ->setUser($user)
+            ->setTotalPrice(0)
+            ->setPaid(false)
+            ->setCreatedAt($datetime)
+            ->setUpdatedAt($datetime);
         $this->_em->persist($newOrder);
         $this->_em->flush();
+
         return $newOrder;
     }
 
-    public function delete(Order $order) {
+    public function delete(Order $order)
+    {
         $this->_em->remove($order);
         $this->_em->flush();
     }
 
-    public function setPaid(Order $order, bool $paid): Order {
-        $order->setPaid($paid);
-        $order->setUpdatedAt(new \DateTimeImmutable('now'));
+    public function setPaid(Order $order, bool $paid): Order
+    {
+        $order
+            ->setPaid($paid)
+            ->setUpdatedAt(new DateTimeImmutable('now'));
         $this->_em->flush();
+
         return $order;
     }
 
-    public function addProduct(Order $order, Product $product): Order {
-        $order->addProduct($product);
-        $order->setTotalPrice($order->getTotalPrice() + $product->getPrice());
+    public function addProduct(Order $order, Product $product): Order
+    {
+        $order
+            ->addProduct($product)
+            ->setTotalPrice($order->getTotalPrice() + $product->getPrice());
         $this->_em->flush();
+
         return $order;
     }
 
-    public function removeProduct(Order $order, Product $product): Order {
-        $order->removeProduct($product);
+    public function removeProduct(Order $order, Product $product): Order
+    {
         //TODO: ask about totalPrice: what to do when price of the product changed?
-        $order->setTotalPrice($order->getTotalPrice() - $product->getPrice());
+        $order
+            ->removeProduct($product)
+            ->setTotalPrice($order->getTotalPrice() - $product->getPrice());
         $this->_em->flush();
+
         return $order;
     }
 
@@ -69,53 +83,22 @@ class OrderRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('o')
             ->andWhere('o.user = :user')
             ->andWhere('o.paid = :paid')
-            ->setParameters(['user'=>$user, 'paid'=>true])
+            ->setParameters(['user' => $user, 'paid' => true])
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 
     /**
      * @return Order[] Returns an array of Order objects
      */
-    public function findOrdersByDate(\DateTimeImmutable $fromDate, \DateTimeImmutable $toDate): array
+    public function findOrdersByDate(DateTimeImmutable $fromDate, DateTimeImmutable $toDate): array
     {
         $qb = $this->createQueryBuilder('o');
 
         return $qb
             ->andWhere($qb->expr()->between('o.createdAt', ':fromDate', ':toDate'))
-            ->setParameters(['fromDate'=>$fromDate, 'toDate'=>$toDate])
+            ->setParameters(['fromDate' => $fromDate, 'toDate' => $toDate])
             ->getQuery()
-            ->getResult()
-            ;
+            ->getResult();
     }
-
-    // /**
-    //  * @return Order[] Returns an array of Order objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('o')
-            ->andWhere('o.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('o.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Order
-    {
-        return $this->createQueryBuilder('o')
-            ->andWhere('o.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }

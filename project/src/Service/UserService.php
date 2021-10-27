@@ -5,8 +5,7 @@ namespace App\Service;
 use App\Entity\User;
 use App\Repository\OrderRepository;
 use App\Repository\UserRepository;
-use App\Utils\Serializer;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
+use App\Utils\JsonConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
@@ -15,21 +14,15 @@ class UserService
 {
     private OrderRepository $orderRepository;
     private UserRepository $userRepository;
+    private AuthService $authService;
 
     public function __construct(OrderRepository $orderRepository,
-                                UserRepository $userRepository) {
+                                UserRepository $userRepository,
+                                AuthService $authService)
+    {
         $this->userRepository = $userRepository;
         $this->orderRepository = $orderRepository;
-    }
-
-    public function getFromRequest(Request $request): User
-    {
-        $apiToken = $request->headers->get('X-AUTH-TOKEN');
-        $user = $this->userRepository->findOneBy(['apiToken' => $apiToken]);
-        if (null === $user) {
-            throw new UserNotFoundException();
-        }
-        return $user;
+        $this->authService = $authService;
     }
 
     public function getSerializedOrders(Request $request, $userId = null): array
@@ -44,35 +37,22 @@ class UserService
         }
 
         $onlyPaid = $request->query->get('paid');
-        $orders = $onlyPaid ? $this->orderRepository->findPaidUserOrders($user) : $user->getOrders();
+        $orders = $onlyPaid ?
+            $this->orderRepository->findPaidUserOrders($user) :
+            $user->getOrders()->getValues();
 
-        return Serializer::getSerializedFromArray($orders);
+        return JsonConverter::getJsonFromEntitiesArray($orders);
     }
 
-    public function login(Request $request): User
+    public function getFromRequest(Request $request): User
     {
-        return $this->userRepository->login($request);
-    }
-
-    public function register(Request $request): User
-    {
-        $email = $request->request->get('email', '');
-        $password = $request->request->get('password', '');
-        if (!$email || !$password) {
-            throw new BadRequestException('email or password is empty');
-        }
-        //TODO: add validators
-        $user = $this->userRepository->findOneBy(['email' => $email]);
-        if ($user) {
-            throw new BadRequestException('user already exists');
+        $apiToken = $this->authService->getApiTokenFromRequest($request);
+        try {
+            $user = $this->userRepository->findByApiToken($apiToken);
+        } catch (UserNotFoundException $e) {
+            throw new NotFoundHttpException('user not found');
         }
 
-        return $this->userRepository->create($email, $password);
-    }
-
-    public function logout(Request $request): User
-    {
-        $user = $this->getFromRequest($request);
-        return $this->userRepository->logout($user);
+        return $user;
     }
 }

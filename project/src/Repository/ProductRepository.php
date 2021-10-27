@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Order;
 use App\Entity\Product;
+use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -20,24 +21,20 @@ class ProductRepository extends ServiceEntityRepository
         parent::__construct($registry, Product::class);
     }
 
-    public function add(string $name, float $price): Product {
+    public function add(string $name, float $price): Product
+    {
+        $datetime = new DateTimeImmutable('now');
         $newProduct = new Product();
-        $newProduct->setName($name);
-        $newProduct->setPrice($price);
-        $datetime = new \DateTimeImmutable('now');
-        $newProduct->setCreatedAt($datetime);
-        $newProduct->setUpdatedAt($datetime);
-        $newProduct->setAvailable(true);
+        $newProduct
+            ->setName($name)
+            ->setPrice($price)
+            ->setCreatedAt($datetime)
+            ->setUpdatedAt($datetime)
+            ->setAvailable(true);
         $this->_em->persist($newProduct);
         $this->_em->flush();
-        return $newProduct;
-    }
 
-    //TODO: think about Product arg instead of id
-    public function delete(int $id) {
-        $product = $this->find($id);
-        $this->_em->remove($product);
-        $this->_em->flush();
+        return $newProduct;
     }
 
     /**
@@ -48,37 +45,8 @@ class ProductRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('p')
             ->innerJoin('p.orders', 'o', 'WITH', 'o = :order')
             ->andWhere('p.available = :available')
-            ->setParameters(['order'=>$order, 'available'=>true])
+            ->setParameters(['order' => $order, 'available' => true])
             ->getQuery()
             ->getResult();
     }
-
-    // /**
-    //  * @return Product[] Returns an array of Product objects
-    //  */
-    /*
-    public function findByExampleField($value)
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('p.id', 'ASC')
-            ->setMaxResults(10)
-            ->getQuery()
-            ->getResult()
-        ;
-    }
-    */
-
-    /*
-    public function findOneBySomeField($value): ?Product
-    {
-        return $this->createQueryBuilder('p')
-            ->andWhere('p.exampleField = :val')
-            ->setParameter('val', $value)
-            ->getQuery()
-            ->getOneOrNullResult()
-        ;
-    }
-    */
 }
