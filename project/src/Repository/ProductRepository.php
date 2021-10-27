@@ -23,13 +23,14 @@ class ProductRepository extends ServiceEntityRepository
 
     public function add(string $name, float $price): Product
     {
-        $newProduct = new Product();
-        $newProduct->setName($name);
-        $newProduct->setPrice($price);
         $datetime = new DateTimeImmutable('now');
-        $newProduct->setCreatedAt($datetime);
-        $newProduct->setUpdatedAt($datetime);
-        $newProduct->setAvailable(true);
+        $newProduct = new Product();
+        $newProduct
+            ->setName($name)
+            ->setPrice($price)
+            ->setCreatedAt($datetime)
+            ->setUpdatedAt($datetime)
+            ->setAvailable(true);
         $this->_em->persist($newProduct);
         $this->_em->flush();
 

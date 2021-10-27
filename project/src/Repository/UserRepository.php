@@ -55,9 +55,10 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     public function create(string $email, string $password): User
     {
         $newUser = new User();
-        $newUser->setEmail($email);
-        $newUser->setPassword($this->encoder->hashPassword($newUser, $password));
-        $newUser->setRoles(['ROLE_USER']);
+        $newUser
+            ->setEmail($email)
+            ->setPassword($this->encoder->hashPassword($newUser, $password))
+            ->setRoles(['ROLE_USER']);
         $this->_em->persist($newUser);
         $this->_em->flush();
 

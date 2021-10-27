@@ -24,13 +24,14 @@ class OrderRepository extends ServiceEntityRepository
 
     public function create(User $user): Order
     {
-        $newOrder = new Order();
-        $newOrder->setUser($user);
-        $newOrder->setTotalPrice(0);
-        $newOrder->setPaid(false);
         $datetime = new DateTimeImmutable('now');
-        $newOrder->setCreatedAt($datetime);
-        $newOrder->setUpdatedAt($datetime);
+        $newOrder = new Order();
+        $newOrder
+            ->setUser($user)
+            ->setTotalPrice(0)
+            ->setPaid(false)
+            ->setCreatedAt($datetime)
+            ->setUpdatedAt($datetime);
         $this->_em->persist($newOrder);
         $this->_em->flush();
 
@@ -45,8 +46,9 @@ class OrderRepository extends ServiceEntityRepository
 
     public function setPaid(Order $order, bool $paid): Order
     {
-        $order->setPaid($paid);
-        $order->setUpdatedAt(new DateTimeImmutable('now'));
+        $order
+            ->setPaid($paid)
+            ->setUpdatedAt(new DateTimeImmutable('now'));
         $this->_em->flush();
 
         return $order;
@@ -54,8 +56,9 @@ class OrderRepository extends ServiceEntityRepository
 
     public function addProduct(Order $order, Product $product): Order
     {
-        $order->addProduct($product);
-        $order->setTotalPrice($order->getTotalPrice() + $product->getPrice());
+        $order
+            ->addProduct($product)
+            ->setTotalPrice($order->getTotalPrice() + $product->getPrice());
         $this->_em->flush();
 
         return $order;
@@ -63,9 +66,10 @@ class OrderRepository extends ServiceEntityRepository
 
     public function removeProduct(Order $order, Product $product): Order
     {
-        $order->removeProduct($product);
         //TODO: ask about totalPrice: what to do when price of the product changed?
-        $order->setTotalPrice($order->getTotalPrice() - $product->getPrice());
+        $order
+            ->removeProduct($product)
+            ->setTotalPrice($order->getTotalPrice() - $product->getPrice());
         $this->_em->flush();
 
         return $order;
