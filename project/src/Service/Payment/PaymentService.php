@@ -6,7 +6,6 @@ namespace App\Service\Payment;
 
 use App\Entity\Order;
 use App\Service\Payment\Strategy\PaymentStrategyInterface;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class PaymentService
 {
@@ -20,7 +19,7 @@ class PaymentService
     public function payOrder(Order $order): bool
     {
         if ($order->getPaid()) {
-            throw new BadRequestHttpException('order is paid already');
+            throw new \Exception('order is paid already');
         }
 
         return $this->paymentStrategy->pay($order);

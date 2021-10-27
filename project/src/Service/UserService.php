@@ -8,6 +8,7 @@ use App\Repository\UserRepository;
 use App\Utils\JsonConverter;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 
 class UserService
 {
@@ -46,7 +47,11 @@ class UserService
     public function getFromRequest(Request $request): User
     {
         $apiToken = $this->authService->getApiTokenFromRequest($request);
-        $user = $this->userRepository->findByApiToken($apiToken);
+        try {
+            $user = $this->userRepository->findByApiToken($apiToken);
+        } catch (UserNotFoundException $e) {
+            throw new NotFoundHttpException('user not found');
+        }
 
         return $user;
     }

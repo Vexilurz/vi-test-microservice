@@ -18,21 +18,6 @@ class AuthController extends AbstractController
         $this->authService = $authService;
     }
 
-    // name="app_login" must match with LoginRequestChecker LOGIN_ROUTE constant
-    // guards by LoginAuthenticator
-    /**
-     * @Route("/login", name="app_login", methods={"POST"})
-     */
-    public function login(Request $request): Response
-    {
-        $user = $this->authService->login($request);
-
-        return $this->json([
-            'message' => 'login success',
-            'apiToken' => $user->getApiToken()
-        ]);
-    }
-
     // name="app_login" must match with RegistrationRequestChecker REGISTRATION_ROUTE constant
     // this method is not guarding by authenticators
     /**
@@ -43,11 +28,30 @@ class AuthController extends AbstractController
         try {
             $user = $this->authService->register($request);
         } catch (HttpException $e) {
-            return $this->json(['message' => $e->getMessage()], Response::HTTP_BAD_REQUEST);
+            return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
         }
 
         return $this->json([
             'message' => 'registration success'
+        ]);
+    }
+
+    // name="app_login" must match with LoginRequestChecker LOGIN_ROUTE constant
+    // guards by LoginAuthenticator
+    /**
+     * @Route("/login", name="app_login", methods={"POST"})
+     */
+    public function login(Request $request): Response
+    {
+        try {
+            $user = $this->authService->login($request);
+        } catch (HttpException $e) {
+            return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
+        }
+
+        return $this->json([
+            'message' => 'login success',
+            'apiToken' => $user->getApiToken()
         ]);
     }
 
@@ -56,7 +60,11 @@ class AuthController extends AbstractController
      */
     public function logout(Request $request): Response
     {
-        $user = $this->authService->logout($request);
+        try {
+            $user = $this->authService->logout($request);
+        } catch (HttpException $e) {
+            return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
+        }
 
         return $this->json([
             'message' => 'logout success'

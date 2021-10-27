@@ -10,6 +10,7 @@ use App\Utils\JsonConverter;
 use DateTimeImmutable;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class OrderService
@@ -90,7 +91,11 @@ class OrderService
     {
         // select payment strategy here
         $paymentService = new PaymentService(new DummyPaymentStrategy());
-        $paymentResult = $paymentService->payOrder($order);
+        try {
+            $paymentResult = $paymentService->payOrder($order);
+        } catch (\Exception $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
 
         //TODO: process if (!$paymentResult)
 

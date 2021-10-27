@@ -7,7 +7,8 @@ use App\Repository\UserRepository;
 use App\Utils\TokenGenerator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 
 class AuthService
 {
@@ -21,12 +22,9 @@ class AuthService
         $this->tokenGenerator = $tokenGenerator;
     }
 
-    public function login(Request $request): User
+    public function getApiTokenFromRequest(Request $request): string
     {
-        $email = $request->request->get('email', '');
-        $newApiToken = $this->tokenGenerator->getNewApiToken();
-
-        return $this->userRepository->login($email, $newApiToken);
+        return $request->headers->get('X-AUTH-TOKEN');
     }
 
     public function register(Request $request): User
@@ -36,25 +34,38 @@ class AuthService
         if (!$email || !$password) {
             throw new BadRequestHttpException('email or password is empty');
         }
-        //TODO: add validators
+        //TODO: add email and password validators
         try {
             $this->userRepository->findByEmail($email);
-        } catch (HttpException $e) {
+        } catch (UserNotFoundException $e) {
             return $this->userRepository->create($email, $password);
         }
         throw new BadRequestHttpException('user already exists');
     }
 
+    public function login(Request $request): User
+    {
+        $email = $request->request->get('email', '');
+        $newApiToken = $this->tokenGenerator->getNewApiToken();
+
+        try {
+            $user = $this->userRepository->findByEmail($email);
+        } catch (UserNotFoundException $e) {
+            throw new NotFoundHttpException('user not found');
+        }
+
+        return $this->userRepository->setApiToken($user, $newApiToken);
+    }
+
     public function logout(Request $request): User
     {
         $apiToken = $this->getApiTokenFromRequest($request);
-        $user = $this->userRepository->findByApiToken($apiToken);
+        try {
+            $user = $this->userRepository->findByApiToken($apiToken);
+        } catch (UserNotFoundException $e) {
+            throw new NotFoundHttpException('user not found');
+        }
 
-        return $this->userRepository->logout($user->getEmail());
-    }
-
-    public function getApiTokenFromRequest(Request $request): string
-    {
-        return $request->headers->get('X-AUTH-TOKEN');
+        return $this->userRepository->setApiToken($user, null);
     }
 }

@@ -5,9 +5,9 @@ namespace App\Repository;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
+use Symfony\Component\Security\Core\Exception\UserNotFoundException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 use function get_class;
@@ -46,7 +46,17 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
     {
         $user = $this->findOneBy(['apiToken' => $apiToken]);
         if (!$user) {
-            throw new NotFoundHttpException('user not found');
+            throw new UserNotFoundException();
+        }
+
+        return $user;
+    }
+
+    public function findByEmail(string $email): User
+    {
+        $user = $this->findOneBy(['email' => $email]);
+        if (!$user) {
+            throw new UserNotFoundException();
         }
 
         return $user;
@@ -65,29 +75,9 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         return $newUser;
     }
 
-    public function login(string $email, string $newApiToken): User
+    public function setApiToken(User $user, $newApiToken): User
     {
-        $user = $this->findByEmail($email);
         $user->setApiToken($newApiToken);
-        $this->_em->flush();
-
-        return $user;
-    }
-
-    public function findByEmail(string $email): User
-    {
-        $user = $this->findOneBy(['email' => $email]);
-        if (!$user) {
-            throw new NotFoundHttpException('user not found');
-        }
-
-        return $user;
-    }
-
-    public function logout(string $email): User
-    {
-        $user = $this->findByEmail($email);
-        $user->setApiToken(null);
         $this->_em->flush();
 
         return $user;
