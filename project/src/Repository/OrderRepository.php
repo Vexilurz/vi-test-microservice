@@ -25,8 +25,7 @@ class OrderRepository extends ServiceEntityRepository
     public function create(User $user): Order
     {
         $datetime = new DateTimeImmutable('now');
-        $newOrder = new Order();
-        $newOrder
+        $newOrder = (new Order())
             ->setUser($user)
             ->setTotalPrice(0)
             ->setPaid(false)
