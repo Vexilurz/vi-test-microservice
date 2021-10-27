@@ -44,7 +44,12 @@ class Order implements JsonConverterInterface
     private $updatedAt;
 
     /**
-     * @ORM\OneToMany(targetEntity=OrderProduct::class, mappedBy="order")
+     * @ORM\OneToMany(
+     *     targetEntity=OrderProduct::class,
+     *     mappedBy="order",
+     *     fetch="EXTRA_LAZY",
+     *     orphanRemoval=true,
+     *     cascade={"persist"})
      */
     private $products;
 
@@ -56,22 +61,6 @@ class Order implements JsonConverterInterface
     public function __construct()
     {
         $this->products = new ArrayCollection();
-    }
-
-    public function addProduct(Product $product): self
-    {
-        if (!$this->products->contains($product)) {
-            $this->products[] = $product;
-        }
-
-        return $this;
-    }
-
-    public function removeProduct(Product $product): self
-    {
-        $this->products->removeElement($product);
-
-        return $this;
     }
 
     public function getJsonArray(array $options = []): array
@@ -94,11 +83,35 @@ class Order implements JsonConverterInterface
     }
 
     /**
-     * @return Collection|Product[]
+     * @return Collection|OrderProduct[]
      */
     public function getProducts(): Collection
     {
         return $this->products;
+    }
+
+    public function addProduct(OrderProduct $orderProduct): self
+    {
+        if ($this->products->contains($orderProduct)) {
+            return $this;
+        }
+        $this->products[] = $orderProduct;
+        // needed to update the owning side of the relationship!
+        $orderProduct->setOrder($this);
+
+        return $this;
+    }
+
+    public function removeProduct(OrderProduct $orderProduct): self
+    {
+        if (!$this->products->contains($orderProduct)) {
+            return $this;
+        }
+        $this->products->removeElement($orderProduct);
+        // needed to update the owning side of the relationship!
+        $orderProduct->setOrder(null);
+
+        return $this;
     }
 
     public function getId(): ?int

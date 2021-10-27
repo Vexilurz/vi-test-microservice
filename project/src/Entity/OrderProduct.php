@@ -34,61 +34,44 @@ class OrderProduct
      */
     private int $productCount;
 
-    /**
-     * @return int
-     */
     public function getId(): int
     {
         return $this->id;
     }
 
-    /**
-     * @return Order
-     */
-    public function getOrder(): Order
+    public function getOrder(): ?Order
     {
         return $this->order;
     }
 
-    /**
-     * @param Order $order
-     */
-    public function setOrder(Order $order): void
+    public function setOrder(Order $order): self
     {
         $this->order = $order;
+
+        return $this;
     }
 
-    /**
-     * @return Product
-     */
-    public function getProduct(): Product
+    public function getProduct(): ?Product
     {
         return $this->product;
     }
 
-    /**
-     * @param Product $product
-     */
-    public function setProduct(Product $product): void
+    public function setProduct(Product $product): self
     {
         $this->product = $product;
+
+        return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getProductCount(): int
     {
         return $this->productCount;
     }
 
-    /**
-     * @param int $productCount
-     */
-    public function setProductCount(int $productCount): void
+    public function setProductCount(int $productCount): self
     {
         $this->productCount = $productCount;
+
+        return $this;
     }
-
-
 }

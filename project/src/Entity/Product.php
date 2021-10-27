@@ -47,40 +47,18 @@ class Product implements JsonConverterInterface
     private $updatedAt;
 
     /**
-     * @ORM\OneToMany(targetEntity=OrderProduct::class, mappedBy="product")
+     * @ORM\OneToMany(
+     *     targetEntity=OrderProduct::class,
+     *     mappedBy="product",
+     *     fetch="EXTRA_LAZY",
+     *     orphanRemoval=true,
+     *     cascade={"persist"})
      */
     private $orders;
 
     public function __construct()
     {
         $this->orders = new ArrayCollection();
-    }
-
-    /**
-     * @return Collection|Order[]
-     */
-    public function getOrders(): Collection
-    {
-        return $this->orders;
-    }
-
-    public function addOrder(Order $order): self
-    {
-        if (!$this->orders->contains($order)) {
-            $this->orders[] = $order;
-            $order->addProduct($this);
-        }
-
-        return $this;
-    }
-
-    public function removeOrder(Order $order): self
-    {
-        if ($this->orders->removeElement($order)) {
-            $order->removeProduct($this);
-        }
-
-        return $this;
     }
 
     public function getJsonArray(array $options = []): array
@@ -93,6 +71,38 @@ class Product implements JsonConverterInterface
             'createdAt' => $this->getCreatedAt()->getTimestamp(),
             'updatedAt' => $this->getUpdatedAt()->getTimestamp()
         ];
+    }
+
+    /**
+     * @return Collection|OrderProduct[]
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(OrderProduct $orderProduct): self
+    {
+        if ($this->orders->contains($orderProduct)) {
+            return $this;
+        }
+        $this->orders[] = $orderProduct;
+        // needed to update the owning side of the relationship!
+        $orderProduct->setProduct($this);
+
+        return $this;
+    }
+
+    public function removeOrder(OrderProduct $orderProduct): self
+    {
+        if (!$this->orders->contains($orderProduct)) {
+            return $this;
+        }
+        $this->orders->removeElement($orderProduct);
+        // needed to update the owning side of the relationship!
+        $orderProduct->setProduct(null);
+
+        return $this;
     }
 
     public function getId(): ?int
