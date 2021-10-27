@@ -81,30 +81,6 @@ class Product implements JsonConverterInterface
         return $this->orders;
     }
 
-    public function addOrder(OrderProduct $orderProduct): self
-    {
-        if ($this->orders->contains($orderProduct)) {
-            return $this;
-        }
-        $this->orders[] = $orderProduct;
-        // needed to update the owning side of the relationship!
-        $orderProduct->setProduct($this);
-
-        return $this;
-    }
-
-    public function removeOrder(OrderProduct $orderProduct): self
-    {
-        if (!$this->orders->contains($orderProduct)) {
-            return $this;
-        }
-        $this->orders->removeElement($orderProduct);
-        // needed to update the owning side of the relationship!
-        $orderProduct->setProduct(null);
-
-        return $this;
-    }
-
     public function getId(): ?int
     {
         return $this->id;
