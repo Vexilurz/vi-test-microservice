@@ -32,7 +32,7 @@ class Product implements JsonConverterInterface
     private $price;
 
     /**
-     * @ORM\Column(type="boolean", options={"default" : true})
+     * @ORM\Column(type="integer", options={"default" : 0})
      */
     private $available;
 
@@ -124,12 +124,12 @@ class Product implements JsonConverterInterface
         return $this;
     }
 
-    public function getAvailable(): ?bool
+    public function getAvailable(): ?int
     {
         return $this->available;
     }
 
-    public function setAvailable(bool $available): self
+    public function setAvailable(int $available): self
     {
         $this->available = $available;
 

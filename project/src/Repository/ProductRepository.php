@@ -44,8 +44,8 @@ class ProductRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('p')
             ->innerJoin('p.orders', 'o', 'WITH', 'o = :order')
-            ->andWhere('p.available = :available')
-            ->setParameters(['order' => $order, 'available' => true])
+            ->andWhere('p.available > :count')
+            ->setParameters(['order' => $order, 'count' => 0])
             ->getQuery()
             ->getResult();
     }

@@ -72,17 +72,17 @@ class AppFixtures extends Fixture
             [
                 'name' => 'Microphone',
                 'price' => 12400,
-                'available' => true,
+                'available' => 1,
             ],
             [
                 'name' => 'Guitar',
                 'price' => 35125,
-                'available' => false,
+                'available' => 0,
             ],
             [
                 'name' => 'Keyboard',
                 'price' => 8145,
-                'available' => true,
+                'available' => 5,
             ],
         ];
         foreach ($productsData as $product) {
