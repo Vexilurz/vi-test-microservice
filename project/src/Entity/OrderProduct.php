@@ -15,18 +15,13 @@ class OrderProduct
 {
     /**
      * @ORM\Id
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @ORM\Column(type="integer")
-     */
-    private int $id;
-
-    /**
      * @ORM\ManyToOne(targetEntity=Order::class, inversedBy="products")
      * @ORM\JoinColumn(nullable=false)
      */
     private Order $order;
 
     /**
+     * @ORM\Id
      * @ORM\ManyToOne(targetEntity=Product::class, inversedBy="orders")
      * @ORM\JoinColumn(nullable=false)
      */
@@ -36,11 +31,6 @@ class OrderProduct
      * @ORM\Column(type="integer", options={"default" : 1})
      */
     private int $productCount;
-
-    public function getId(): int
-    {
-        return $this->id;
-    }
 
     public function getOrder(): ?Order
     {
@@ -74,6 +64,13 @@ class OrderProduct
     public function setProductCount(int $productCount): self
     {
         $this->productCount = $productCount;
+
+        return $this;
+    }
+
+    public function addProductCount(int $productCount): self
+    {
+        $this->productCount += $productCount;
 
         return $this;
     }

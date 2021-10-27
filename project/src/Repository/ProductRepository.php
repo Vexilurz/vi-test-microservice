@@ -49,4 +49,16 @@ class ProductRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /**
+     * @return Product[] Returns an array of Product objects
+     */
+    public function findInOrder(Order $order): array
+    {
+        return $this->createQueryBuilder('p')
+            ->innerJoin('p.orders', 'o', 'WITH', 'o = :order')
+            ->setParameters(['order' => $order])
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -56,12 +56,15 @@ class OrderController extends AbstractController
     public function addProduct(Request $request): Response
     {
         try {
-            $this->service->addProduct($request);
+            $orderProduct = $this->service->addProduct($request);
         } catch (HttpException $e) {
             return $this->json(['message' => $e->getMessage()], $e->getStatusCode());
         }
 
-        return $this->json(['message' => 'product added to the order']);
+        return $this->json([
+            'message' => 'product added to the order',
+            'current_product_count' => $orderProduct->getProductCount()
+        ]);
     }
 
     /**

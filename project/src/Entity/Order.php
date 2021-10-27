@@ -65,7 +65,7 @@ class Order implements JsonConverterInterface
 
     public function getJsonArray(array $options = []): array
     {
-        $products = $this->getProducts()->getValues();
+        $products = $this->getProducts();
         $productsSerialized = JsonConverter::getJsonFromEntitiesArray($products);
         $result = [
             'orderId' => $this->getId(),
@@ -85,9 +85,22 @@ class Order implements JsonConverterInterface
     /**
      * @return Collection|OrderProduct[]
      */
-    public function getProducts(): Collection
+    private function getOrderProducts(): Collection
     {
         return $this->products;
+    }
+
+    /**
+     * @return Collection|Product[]
+     */
+    public function getProducts(): Collection
+    {
+        $result = [];
+        foreach ($this->getOrderProducts()->getValues() as $entity) {
+            $result[] = $entity->product;
+        }
+
+        return $result;
     }
 
     public function addProduct(OrderProduct $orderProduct): self
