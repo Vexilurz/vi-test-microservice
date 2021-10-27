@@ -56,7 +56,8 @@ class AppFixtures extends Fixture
             ],
         ];
         foreach ($usersData as $user) {
-            $newUser = (new User())
+            $newUser = new User();
+            $newUser
                 ->setEmail($user['email'])
                 ->setPassword($this->encoder->hashPassword($newUser, $user['password']))
                 ->setRoles(['ROLE_USER'])
@@ -86,7 +87,8 @@ class AppFixtures extends Fixture
         ];
         foreach ($productsData as $product) {
             $dateTime = new DateTimeImmutable('now');
-            $newProduct = (new Product())
+            $newProduct = new Product();
+            $newProduct
                 ->setName($product['name'])
                 ->setPrice($product['price'])
                 ->setAvailable($product['available'])
@@ -107,7 +109,8 @@ class AppFixtures extends Fixture
         $user2 = $this->em->getRepository(User::class)->findByEmail('test2@example.com');
 
         $dateTime = new DateTimeImmutable('2021-10-05');
-        $newOrder = (new Order())
+        $newOrder = new Order();
+        $newOrder
             ->setUser($user)
             ->setPaid(true)
             ->addProduct($products[0])
@@ -118,7 +121,8 @@ class AppFixtures extends Fixture
         $this->em->persist($newOrder);
 
         $dateTime = new DateTimeImmutable('2021-10-10');
-        $newOrder = (new Order())
+        $newOrder = new Order();
+        $newOrder
             ->setUser($user)
             ->setPaid(false)
             ->setTotalPrice(0)
@@ -127,7 +131,8 @@ class AppFixtures extends Fixture
         $this->em->persist($newOrder);
 
         $dateTime = new DateTimeImmutable('2021-10-15');
-        $newOrder = (new Order())
+        $newOrder = new Order();
+        $newOrder
             ->setUser($user)
             ->setPaid(false)
             ->addProduct($products[1])
@@ -138,7 +143,8 @@ class AppFixtures extends Fixture
         $this->em->persist($newOrder);
 
         $dateTime = new DateTimeImmutable('2021-10-20');
-        $newOrder = (new Order())
+        $newOrder = new Order();
+        $newOrder
             ->setUser($user2)
             ->setPaid(true)
             ->addProduct($products[0])
