@@ -91,10 +91,4 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
 
         return $user;
     }
-
-//    public function deleteByEmail(string $email) {
-//        $user = $this->findOneBy(['email' => $email]);
-//        $this->_em->remove($user);
-//        $this->_em->flush();
-//    }
 }
