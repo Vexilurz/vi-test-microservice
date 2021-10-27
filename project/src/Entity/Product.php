@@ -47,7 +47,7 @@ class Product implements JsonConverterInterface
     private $updatedAt;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Order::class, mappedBy="products")
+     * @ORM\OneToMany(targetEntity=OrderProduct::class, mappedBy="product")
      */
     private $orders;
 
