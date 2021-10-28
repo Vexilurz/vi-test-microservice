@@ -19,13 +19,11 @@ final class Version20211027190956 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('CREATE UNIQUE INDEX order_product_unique ON order_product (order_id, product_id)');
     }
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('DROP INDEX order_product_unique ON order_product');
     }
 }

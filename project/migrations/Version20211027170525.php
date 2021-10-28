@@ -19,7 +19,6 @@ final class Version20211027170525 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE order_product DROP FOREIGN KEY FK_2530ADE64584665A');
         $this->addSql('ALTER TABLE order_product DROP FOREIGN KEY FK_2530ADE68D9F6D38');
         $this->addSql('ALTER TABLE order_product DROP PRIMARY KEY');
@@ -30,7 +29,6 @@ final class Version20211027170525 extends AbstractMigration
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE order_product MODIFY id INT NOT NULL');
         $this->addSql('ALTER TABLE order_product DROP FOREIGN KEY FK_2530ADE68D9F6D38');
         $this->addSql('ALTER TABLE order_product DROP FOREIGN KEY FK_2530ADE64584665A');
