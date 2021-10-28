@@ -47,7 +47,12 @@ class Product implements JsonConverterInterface
     private $updatedAt;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Order::class, mappedBy="products")
+     * @ORM\OneToMany(
+     *     targetEntity=OrderProduct::class,
+     *     mappedBy="product",
+     *     fetch="EXTRA_LAZY",
+     *     orphanRemoval=true,
+     *     cascade={"persist"})
      */
     private $orders;
 
@@ -56,34 +61,7 @@ class Product implements JsonConverterInterface
         $this->orders = new ArrayCollection();
     }
 
-    /**
-     * @return Collection|Order[]
-     */
-    public function getOrders(): Collection
-    {
-        return $this->orders;
-    }
-
-    public function addOrder(Order $order): self
-    {
-        if (!$this->orders->contains($order)) {
-            $this->orders[] = $order;
-            $order->addProduct($this);
-        }
-
-        return $this;
-    }
-
-    public function removeOrder(Order $order): self
-    {
-        if ($this->orders->removeElement($order)) {
-            $order->removeProduct($this);
-        }
-
-        return $this;
-    }
-
-    public function getJsonArray(array $options = []): array
+    public function getJson(array $options = []): array
     {
         return [
             'productId' => $this->getId(),
@@ -93,6 +71,14 @@ class Product implements JsonConverterInterface
             'createdAt' => $this->getCreatedAt()->getTimestamp(),
             'updatedAt' => $this->getUpdatedAt()->getTimestamp()
         ];
+    }
+
+    /**
+     * @return Collection|OrderProduct[]
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
     }
 
     public function getId(): ?int

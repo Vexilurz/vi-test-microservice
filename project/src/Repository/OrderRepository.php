@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Order;
+use App\Entity\OrderProduct;
 use App\Entity\Product;
 use App\Entity\User;
 use DateTimeImmutable;
@@ -17,9 +18,12 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class OrderRepository extends ServiceEntityRepository
 {
-    public function __construct(ManagerRegistry $registry)
+    private OrderProductRepository $orderProductRepository;
+
+    public function __construct(ManagerRegistry $registry, OrderProductRepository $orderProductRepository)
     {
         parent::__construct($registry, Order::class);
+        $this->orderProductRepository = $orderProductRepository;
     }
 
     public function create(User $user): Order
@@ -54,25 +58,46 @@ class OrderRepository extends ServiceEntityRepository
         return $order;
     }
 
-    public function addProduct(Order $order, Product $product): Order
+    public function addProduct(Order $order, Product $product, int $productCount = 1): OrderProduct
     {
+        if ($productCount < 1) {
+            throw new \Exception('product count must be greater than zero');
+        }
+
+        $orderProduct = $this->orderProductRepository->findOrderProduct($order, $product);
+        // if product already exist in order:
+        if ($orderProduct) {
+            $orderProduct->addProductCount($productCount);
+        } else {
+            $orderProduct = new OrderProduct();
+            $orderProduct
+                ->setOrder($order)
+                ->setProduct($product)
+                ->setProductCount($productCount);
+            $this->_em->persist($orderProduct);
+
+//            $order->addProduct($orderProduct);
+        }
         $order
-            ->addProduct($product)
-            ->setTotalPrice($order->getTotalPrice() + $product->getPrice());
+            ->setTotalPrice($order->getTotalPrice() + $product->getPrice() * $productCount)
+            ->setUpdatedAt(new \DateTimeImmutable('now'));
         $this->_em->flush();
 
-        return $order;
+        return $orderProduct;
     }
 
-    public function removeProduct(Order $order, Product $product): Order
+    public function removeProduct(Order $order, Product $product): void
     {
-        //TODO: ask about totalPrice: what to do when price of the product changed?
-        $order
-            ->removeProduct($product)
-            ->setTotalPrice($order->getTotalPrice() - $product->getPrice());
-        $this->_em->flush();
+        $orderProduct = $this->orderProductRepository->findOrderProduct($order, $product);
+        if (!$orderProduct) {
+            throw new \Exception('product not exist in order');
+        }
 
-        return $order;
+        $order
+            ->setTotalPrice($order->getTotalPrice() - $product->getPrice() * $orderProduct->getProductCount())
+            ->setUpdatedAt(new \DateTimeImmutable('now'));
+        $this->_em->remove($orderProduct);
+        $this->_em->flush();
     }
 
     /**

@@ -4,5 +4,5 @@ namespace App\Utils;
 
 interface JsonConverterInterface
 {
-    public function getJsonArray(array $options = []): array;
+    public function getJson(array $options = []): array;
 }

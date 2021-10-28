@@ -9,14 +9,12 @@ Launch steps:
 - enter into "vitm-php" container: `docker exec -it vitm-php /bin/bash`
 - execute `symfony console doctrine:migrations:migrate`
 
-  
 To apply fixtures:
 
 - enter into "vitm-php" container: `docker exec -it vitm-php /bin/bash`
 - execute `symfony console doctrine:fixtures:load`
 
-
-  **!!! Before run tests: !!!**
+**!!! Before run tests: !!!**
 
 - enter into "vitm-php" container: `docker exec -it vitm-php /bin/bash`
 - execute `APP_ENV=test symfony console doctrine:database:create`

@@ -44,7 +44,12 @@ class Order implements JsonConverterInterface
     private $updatedAt;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Product::class, inversedBy="orders")
+     * @ORM\OneToMany(
+     *     targetEntity=OrderProduct::class,
+     *     mappedBy="order",
+     *     fetch="EXTRA_LAZY",
+     *     orphanRemoval=true,
+     *     cascade={"persist"})
      */
     private $products;
 
@@ -58,23 +63,7 @@ class Order implements JsonConverterInterface
         $this->products = new ArrayCollection();
     }
 
-    public function addProduct(Product $product): self
-    {
-        if (!$this->products->contains($product)) {
-            $this->products[] = $product;
-        }
-
-        return $this;
-    }
-
-    public function removeProduct(Product $product): self
-    {
-        $this->products->removeElement($product);
-
-        return $this;
-    }
-
-    public function getJsonArray(array $options = []): array
+    public function getJson(array $options = []): array
     {
         $products = $this->getProducts()->getValues();
         $productsSerialized = JsonConverter::getJsonFromEntitiesArray($products);
@@ -87,14 +76,14 @@ class Order implements JsonConverterInterface
             'updatedAt' => $this->getUpdatedAt()->getTimestamp()
         ];
         if (array_key_exists('includeUser', $options) && $options['includeUser']) {
-            $result['user'] = $this->getUser()->getJsonArray();
+            $result['user'] = $this->getUser()->getJson();
         }
 
         return $result;
     }
 
     /**
-     * @return Collection|Product[]
+     * @return Collection|OrderProduct[]
      */
     public function getProducts(): Collection
     {

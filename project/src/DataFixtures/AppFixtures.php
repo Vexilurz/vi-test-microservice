@@ -3,6 +3,7 @@
 namespace App\DataFixtures;
 
 use App\Entity\Order;
+use App\Entity\OrderProduct;
 use App\Entity\Product;
 use App\Entity\User;
 use DateTimeImmutable;
@@ -72,12 +73,12 @@ class AppFixtures extends Fixture
             [
                 'name' => 'Microphone',
                 'price' => 12400,
-                'available' => 1,
+                'available' => 5,
             ],
             [
                 'name' => 'Guitar',
                 'price' => 35125,
-                'available' => 0,
+                'available' => 1,
             ],
             [
                 'name' => 'Keyboard',
@@ -113,12 +114,12 @@ class AppFixtures extends Fixture
         $newOrder
             ->setUser($user)
             ->setPaid(true)
-            ->addProduct($products[0])
-            ->addProduct($products[1])
             ->setTotalPrice($products[0]->getPrice() + $products[1]->getPrice())
             ->setCreatedAt($dateTime)
             ->setUpdatedAt($dateTime);
         $this->em->persist($newOrder);
+        $this->addProduct($newOrder, $products[0], 5);
+        $this->addProduct($newOrder, $products[1], 2);
 
         $dateTime = new DateTimeImmutable('2021-10-10');
         $newOrder = new Order();
@@ -135,23 +136,33 @@ class AppFixtures extends Fixture
         $newOrder
             ->setUser($user)
             ->setPaid(false)
-            ->addProduct($products[1])
-            ->addProduct($products[2])
             ->setTotalPrice($products[1]->getPrice() + $products[2]->getPrice())
             ->setCreatedAt($dateTime)
             ->setUpdatedAt($dateTime);
         $this->em->persist($newOrder);
+        $this->addProduct($newOrder, $products[1], 1);
+        $this->addProduct($newOrder, $products[2], 4);
 
         $dateTime = new DateTimeImmutable('2021-10-20');
         $newOrder = new Order();
         $newOrder
             ->setUser($user2)
             ->setPaid(true)
-            ->addProduct($products[0])
-            ->addProduct($products[2])
             ->setTotalPrice($products[0]->getPrice() + $products[2]->getPrice())
             ->setCreatedAt($dateTime)
             ->setUpdatedAt($dateTime);
         $this->em->persist($newOrder);
+        $this->addProduct($newOrder, $products[0], 3);
+        $this->addProduct($newOrder, $products[2], 1);
+    }
+
+    private function addProduct(Order $order, Product $product, int $count = 1)
+    {
+        $orderProduct = new OrderProduct();
+        $orderProduct
+            ->setOrder($order)
+            ->setProduct($product)
+            ->setProductCount($count);
+        $this->em->persist($orderProduct);
     }
 }

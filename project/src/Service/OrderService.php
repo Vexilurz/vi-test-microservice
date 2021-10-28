@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\Order;
+use App\Entity\OrderProduct;
 use App\Repository\OrderRepository;
 use App\Service\Payment\PaymentService;
 use App\Service\Payment\Strategy\DummyPaymentStrategy;
@@ -20,8 +21,8 @@ class OrderService
     private ProductService $productService;
 
     public function __construct(OrderRepository $orderRepository,
-                                UserService $userService,
-                                ProductService $productService
+                                UserService     $userService,
+                                ProductService  $productService
     )
     {
         $this->orderRepository = $orderRepository;
@@ -59,6 +60,11 @@ class OrderService
         return $order;
     }
 
+    public function getProductCountFromRequest(Request $request): int
+    {
+        return $request->request->get('productCount', 1);
+    }
+
     public function getSerializedOrders(Request $request): array
     {
         $fromDate = $request->query->get('fromDate');
@@ -70,21 +76,31 @@ class OrderService
         return JsonConverter::getJsonFromEntitiesArray($orders, ['includeUser' => true]);
     }
 
-    public function removeProduct(Request $request): Order
+    public function addProduct(Request $request): OrderProduct
     {
         $order = $this->getFromRequest($request);
         $product = $this->productService->getFromRequest($request);
+        $productCount = $this->getProductCountFromRequest($request);
 
-        //TODO: check if product available in order?
-        return $this->orderRepository->removeProduct($order, $product);
+        try {
+            $orderProduct = $this->orderRepository->addProduct($order, $product, $productCount);
+        } catch (\Exception $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
+
+        return $orderProduct;
     }
 
-    public function addProduct(Request $request): Order
+    public function removeProduct(Request $request): void
     {
         $order = $this->getFromRequest($request);
         $product = $this->productService->getFromRequest($request);
 
-        return $this->orderRepository->addProduct($order, $product);
+        try {
+            $this->orderRepository->removeProduct($order, $product);
+        } catch (\Exception $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
     }
 
     public function payOrder(Order $order): Order

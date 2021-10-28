@@ -16,7 +16,7 @@ class ProductService
     private OrderRepository $orderRepository;
 
     public function __construct(ProductRepository $productRepository,
-                                OrderRepository $orderRepository)
+                                OrderRepository   $orderRepository)
     {
         $this->productRepository = $productRepository;
         $this->orderRepository = $orderRepository;
