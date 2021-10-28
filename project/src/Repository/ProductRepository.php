@@ -43,9 +43,9 @@ class ProductRepository extends ServiceEntityRepository
     public function findAvailableInOrder(Order $order): array
     {
         return $this->createQueryBuilder('p')
-            ->innerJoin('p.orders', 'o', 'WITH', 'o.order = :order')
-            ->andWhere('p.available > :count')
-            ->setParameters(['order' => $order->getId(), 'count' => 0])
+            ->innerJoin('p.orders', 'op', 'WITH', 'op.order = :order')
+            ->andWhere('p.available >= op.productCount')
+            ->setParameters(['order' => $order])
             ->getQuery()->getResult();
     }
 }

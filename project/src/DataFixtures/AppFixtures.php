@@ -73,12 +73,12 @@ class AppFixtures extends Fixture
             [
                 'name' => 'Microphone',
                 'price' => 12400,
-                'available' => 1,
+                'available' => 5,
             ],
             [
                 'name' => 'Guitar',
                 'price' => 35125,
-                'available' => 0,
+                'available' => 1,
             ],
             [
                 'name' => 'Keyboard',
