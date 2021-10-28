@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\OrderRepository;
+use App\Utils\JsonConverter;
 use App\Utils\JsonConverterInterface;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -64,10 +65,13 @@ class Order implements JsonConverterInterface
 
     public function getJson(array $options = []): array
     {
+        $products = $this->getProducts()->getValues();
+        $productsSerialized = JsonConverter::getJsonFromEntitiesArray($products);
         $result = [
             'orderId' => $this->getId(),
             'paid' => $this->getPaid(),
             'totalPrice' => $this->getTotalPrice(),
+            'products' => $productsSerialized,
             'createdAt' => $this->getCreatedAt()->getTimestamp(),
             'updatedAt' => $this->getUpdatedAt()->getTimestamp()
         ];
@@ -81,7 +85,7 @@ class Order implements JsonConverterInterface
     /**
      * @return Collection|OrderProduct[]
      */
-    private function getProducts(): Collection
+    public function getProducts(): Collection
     {
         return $this->products;
     }
@@ -92,7 +96,6 @@ class Order implements JsonConverterInterface
             return $this;
         }
         $this->products[] = $orderProduct;
-        // needed to update the owning side of the relationship!
         $orderProduct->setOrder($this);
 
         return $this;
@@ -104,7 +107,6 @@ class Order implements JsonConverterInterface
             return $this;
         }
         $this->products->removeElement($orderProduct);
-        // needed to update the owning side of the relationship!
         $orderProduct->setOrder(null);
 
         return $this;

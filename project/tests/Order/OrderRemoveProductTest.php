@@ -24,7 +24,7 @@ class OrderRemoveProductTest extends VitmBaseWebTestCase
     {
         $this->setBody(['orderId' => 1, 'productId' => 3]);
         $this->setResponseCode(Response::HTTP_BAD_REQUEST);
-        $this->checkResponseWithMessage('CHANGE IT');
+        $this->checkResponseWithMessage('product not exist in order');
     }
 
     public function testRemoveProductNotOrderOwner(): void

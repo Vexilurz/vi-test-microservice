@@ -91,12 +91,16 @@ class OrderService
         return $orderProduct;
     }
 
-    public function removeProduct(Request $request): Order
+    public function removeProduct(Request $request): void
     {
         $order = $this->getFromRequest($request);
         $product = $this->productService->getFromRequest($request);
 
-        return $this->orderRepository->removeProduct($order, $product);
+        try {
+            $this->orderRepository->removeProduct($order, $product);
+        } catch (\Exception $e) {
+            throw new BadRequestHttpException($e->getMessage());
+        }
     }
 
     public function payOrder(Order $order): Order

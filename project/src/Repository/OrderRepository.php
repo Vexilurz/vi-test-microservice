@@ -65,25 +65,28 @@ class OrderRepository extends ServiceEntityRepository
         }
 
         $orderProduct = $this->orderProductRepository->findOrderProduct($order, $product);
+        // if product already exist in order:
         if ($orderProduct) {
-            //product already exist in order
             $orderProduct->addProductCount($productCount);
         } else {
             $orderProduct = new OrderProduct();
             $orderProduct
+                ->setOrder($order)
                 ->setProduct($product)
                 ->setProductCount($productCount);
             $this->_em->persist($orderProduct);
 
-            $order->addProduct($orderProduct);
+//            $order->addProduct($orderProduct);
         }
-        $order->setTotalPrice($order->getTotalPrice() + $product->getPrice() * $productCount);
+        $order
+            ->setTotalPrice($order->getTotalPrice() + $product->getPrice() * $productCount)
+            ->setUpdatedAt(new \DateTimeImmutable('now'));
         $this->_em->flush();
 
         return $orderProduct;
     }
 
-    public function removeProduct(Order $order, Product $product): Order
+    public function removeProduct(Order $order, Product $product): void
     {
         $orderProduct = $this->orderProductRepository->findOrderProduct($order, $product);
         if (!$orderProduct) {
@@ -92,10 +95,9 @@ class OrderRepository extends ServiceEntityRepository
 
         $order
             ->setTotalPrice($order->getTotalPrice() - $product->getPrice() * $orderProduct->getProductCount())
-            ->removeProduct($orderProduct);
+            ->setUpdatedAt(new \DateTimeImmutable('now'));
+        $this->_em->remove($orderProduct);
         $this->_em->flush();
-
-        return $order;
     }
 
     /**
