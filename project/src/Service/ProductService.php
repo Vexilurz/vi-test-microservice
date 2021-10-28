@@ -55,7 +55,7 @@ class ProductService
         $available = $request->query->get('available');
         $products = $available ?
             $this->productRepository->findAvailableInOrder($order) :
-            $order->getProducts()->getValues();
+            $order->getOrderProducts()->getValues();
 
         return JsonConverter::getJsonFromEntitiesArray($products);
     }

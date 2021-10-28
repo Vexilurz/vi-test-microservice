@@ -54,11 +54,11 @@ class Product implements JsonConverterInterface
      *     orphanRemoval=true,
      *     cascade={"persist"})
      */
-    private $orders;
+    private $orderProducts;
 
     public function __construct()
     {
-        $this->orders = new ArrayCollection();
+        $this->orderProducts = new ArrayCollection();
     }
 
     public function getJson(array $options = []): array
@@ -76,9 +76,9 @@ class Product implements JsonConverterInterface
     /**
      * @return Collection|OrderProduct[]
      */
-    public function getOrders(): Collection
+    public function getOrderProducts(): Collection
     {
-        return $this->orders;
+        return $this->orderProducts;
     }
 
     public function getId(): ?int

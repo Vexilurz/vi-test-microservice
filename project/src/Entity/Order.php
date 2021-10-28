@@ -51,7 +51,7 @@ class Order implements JsonConverterInterface
      *     orphanRemoval=true,
      *     cascade={"persist"})
      */
-    private $products;
+    private $orderProducts;
 
     /**
      * @ORM\Column(type="float", options={"default" : 0})
@@ -60,13 +60,13 @@ class Order implements JsonConverterInterface
 
     public function __construct()
     {
-        $this->products = new ArrayCollection();
+        $this->orderProducts = new ArrayCollection();
     }
 
     public function getJson(array $options = []): array
     {
-        $products = $this->getProducts()->getValues();
-        $productsSerialized = JsonConverter::getJsonFromEntitiesArray($products);
+        $orderProducts = $this->getOrderProducts()->getValues();
+        $productsSerialized = JsonConverter::getJsonFromEntitiesArray($orderProducts);
         $result = [
             'orderId' => $this->getId(),
             'paid' => $this->getPaid(),
@@ -85,9 +85,9 @@ class Order implements JsonConverterInterface
     /**
      * @return Collection|OrderProduct[]
      */
-    public function getProducts(): Collection
+    public function getOrderProducts(): Collection
     {
-        return $this->products;
+        return $this->orderProducts;
     }
 
     public function getId(): ?int
