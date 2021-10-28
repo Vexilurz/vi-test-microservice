@@ -18,9 +18,12 @@ class AuthController extends AbstractController
         $this->authService = $authService;
     }
 
-    // name="app_login" must match with RegistrationRequestChecker REGISTRATION_ROUTE constant
-    // this method is not guarding by authenticators
     /**
+     * This route method is not guarding by authenticators
+     *
+     * name="app_login" must match with
+     * Security\RequestChecker\RegistrationRequestChecker::REGISTRATION_ROUTE constant
+     *
      * @Route("/register", name="app_registration", methods={"POST"})
      */
     public function register(Request $request): Response
@@ -36,9 +39,12 @@ class AuthController extends AbstractController
         ]);
     }
 
-    // name="app_login" must match with LoginRequestChecker LOGIN_ROUTE constant
-    // guards by LoginAuthenticator
     /**
+     * This route method guards by Security\LoginAuthenticator
+     *
+     * name="app_login" must match with
+     * Security\RequestChecker\LoginRequestChecker::LOGIN_ROUTE constant
+     *
      * @Route("/login", name="app_login", methods={"POST"})
      */
     public function login(Request $request): Response

@@ -16,10 +16,11 @@ class UserService
     private UserRepository $userRepository;
     private AuthService $authService;
 
-    public function __construct(OrderRepository $orderRepository,
-                                UserRepository $userRepository,
-                                AuthService $authService)
-    {
+    public function __construct(
+        OrderRepository $orderRepository,
+        UserRepository  $userRepository,
+        AuthService     $authService
+    ) {
         $this->userRepository = $userRepository;
         $this->orderRepository = $orderRepository;
         $this->authService = $authService;

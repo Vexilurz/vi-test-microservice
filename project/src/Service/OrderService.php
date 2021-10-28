@@ -20,11 +20,11 @@ class OrderService
     private UserService $userService;
     private ProductService $productService;
 
-    public function __construct(OrderRepository $orderRepository,
-                                UserService     $userService,
-                                ProductService  $productService
-    )
-    {
+    public function __construct(
+        OrderRepository $orderRepository,
+        UserService     $userService,
+        ProductService  $productService
+    ) {
         $this->orderRepository = $orderRepository;
         $this->userService = $userService;
         $this->productService = $productService;

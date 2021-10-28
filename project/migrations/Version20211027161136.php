@@ -19,13 +19,11 @@ final class Version20211027161136 extends AbstractMigration
 
     public function up(Schema $schema): void
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE product CHANGE available available INT DEFAULT 0 NOT NULL');
     }
 
     public function down(Schema $schema): void
     {
-        // this down() migration is auto-generated, please modify it to your needs
         $this->addSql('ALTER TABLE product CHANGE available available TINYINT(1) DEFAULT \'1\' NOT NULL');
     }
 }

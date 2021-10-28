@@ -95,7 +95,6 @@ class OrderController extends AbstractController
 
         return $this->json([
             'message' => 'order has been paid',
-//            'id' => $order->getId()
         ]);
     }
 
