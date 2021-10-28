@@ -64,5 +64,7 @@ services:
       - ./php-workers/supervisor.d:/etc/supervisor.d
     ports:
       - "${PHP_PORT}:9000"
+    depends_on:
+      - vitm-mysql
     networks:
       - backend

@@ -126,10 +126,14 @@ RUN mv composer.phar /usr/local/bin/composer
 RUN curl -sS https://get.symfony.com/cli/installer | bash
 RUN mv /root/.symfony/bin/symfony /usr/local/bin/symfony
 
+ADD start.sh /
+RUN chmod +x /start.sh
+RUN chown -R www-data:www-data /start.sh
+
 USER www-data:www-data
 
 WORKDIR /var/www/
 
 #USER root
 
-CMD bash -c "composer update && php-fpm"
+CMD ["/start.sh"]
