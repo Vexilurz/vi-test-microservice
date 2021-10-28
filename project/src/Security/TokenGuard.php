@@ -20,9 +20,10 @@ class TokenGuard extends EndpointCheckAuthenticator
 {
     private $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager,
-                                TokenGuardRequestChecker $requestChecker)
-    {
+    public function __construct(
+        EntityManagerInterface   $entityManager,
+        TokenGuardRequestChecker $requestChecker
+    ) {
         parent::__construct($requestChecker);
         $this->entityManager = $entityManager;
     }
@@ -31,8 +32,6 @@ class TokenGuard extends EndpointCheckAuthenticator
     {
         $apiToken = $request->headers->get('X-AUTH-TOKEN');
         if (null === $apiToken) {
-            // The token header was empty, authentication fails with HTTP Status
-            // Code 401 "Unauthorized"
             throw new CustomUserMessageAuthenticationException('No API token provided');
         }
 

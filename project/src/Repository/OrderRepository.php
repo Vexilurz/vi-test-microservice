@@ -75,8 +75,6 @@ class OrderRepository extends ServiceEntityRepository
                 ->setProduct($product)
                 ->setProductCount($productCount);
             $this->_em->persist($orderProduct);
-
-//            $order->addProduct($orderProduct);
         }
         $order
             ->setTotalPrice($order->getTotalPrice() + $product->getPrice() * $productCount)

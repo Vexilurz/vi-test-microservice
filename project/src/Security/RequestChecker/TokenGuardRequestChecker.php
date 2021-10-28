@@ -8,9 +8,10 @@ class TokenGuardRequestChecker implements RequestCheckerInterface
 {
     private array $requestCheckers;
 
-    public function __construct(LoginRequestChecker $loginRequestChecker,
-                                RegistrationRequestChecker $registrationRequestChecker)
-    {
+    public function __construct(
+        LoginRequestChecker        $loginRequestChecker,
+        RegistrationRequestChecker $registrationRequestChecker
+    ) {
         $this->requestCheckers[] = $loginRequestChecker;
         $this->requestCheckers[] = $registrationRequestChecker;
     }

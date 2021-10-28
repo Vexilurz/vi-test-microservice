@@ -15,9 +15,10 @@ class AuthService
     private UserRepository $userRepository;
     private TokenGenerator $tokenGenerator;
 
-    public function __construct(UserRepository $userRepository,
-                                TokenGenerator $tokenGenerator)
-    {
+    public function __construct(
+        UserRepository $userRepository,
+        TokenGenerator $tokenGenerator
+    ) {
         $this->userRepository = $userRepository;
         $this->tokenGenerator = $tokenGenerator;
     }

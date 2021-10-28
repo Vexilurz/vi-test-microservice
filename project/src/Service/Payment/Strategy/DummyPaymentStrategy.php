@@ -1,8 +1,6 @@
 <?php
 
-
 namespace App\Service\Payment\Strategy;
-
 
 use App\Entity\Order;
 
