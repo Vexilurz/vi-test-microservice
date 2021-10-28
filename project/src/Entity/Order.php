@@ -90,28 +90,6 @@ class Order implements JsonConverterInterface
         return $this->products;
     }
 
-    public function addProduct(OrderProduct $orderProduct): self
-    {
-        if ($this->products->contains($orderProduct)) {
-            return $this;
-        }
-        $this->products[] = $orderProduct;
-        $orderProduct->setOrder($this);
-
-        return $this;
-    }
-
-    public function removeProduct(OrderProduct $orderProduct): self
-    {
-        if (!$this->products->contains($orderProduct)) {
-            return $this;
-        }
-        $this->products->removeElement($orderProduct);
-        $orderProduct->setOrder(null);
-
-        return $this;
-    }
-
     public function getId(): ?int
     {
         return $this->id;
