@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use App\Utils\JsonConverterInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -11,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
  *        @ORM\UniqueConstraint(name="order_product_unique", columns={"order_id", "product_id"})
  *    })
  */
-class OrderProduct
+class OrderProduct implements JsonConverterInterface
 {
     /**
      * @ORM\Id
@@ -31,6 +32,14 @@ class OrderProduct
      * @ORM\Column(type="integer", options={"default" : 1})
      */
     private int $productCount;
+
+    public function getJson(array $options = []): array
+    {
+        $jsonOrder = $this->order->getJson();
+        $jsonOrder['products'] = $this->product->getJson();
+
+        return $jsonOrder;
+    }
 
     public function getOrder(): ?Order
     {

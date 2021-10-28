@@ -61,7 +61,7 @@ class Product implements JsonConverterInterface
         $this->orders = new ArrayCollection();
     }
 
-    public function getJsonArray(array $options = []): array
+    public function getJson(array $options = []): array
     {
         return [
             'productId' => $this->getId(),

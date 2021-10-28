@@ -13,7 +13,7 @@ class JsonConverter
     {
         $result = [];
         foreach ($objects as $object) {
-            $result[] = $object->getJsonArray($options);
+            $result[] = $object->getJson($options);
         }
 
         return $result;

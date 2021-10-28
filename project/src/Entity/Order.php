@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\OrderRepository;
-use App\Utils\JsonConverter;
 use App\Utils\JsonConverterInterface;
 use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
@@ -63,20 +62,17 @@ class Order implements JsonConverterInterface
         $this->products = new ArrayCollection();
     }
 
-    public function getJsonArray(array $options = []): array
+    public function getJson(array $options = []): array
     {
-        $products = $this->getProducts();
-        $productsSerialized = JsonConverter::getJsonFromEntitiesArray($products);
         $result = [
             'orderId' => $this->getId(),
             'paid' => $this->getPaid(),
             'totalPrice' => $this->getTotalPrice(),
-            'products' => $productsSerialized,
             'createdAt' => $this->getCreatedAt()->getTimestamp(),
             'updatedAt' => $this->getUpdatedAt()->getTimestamp()
         ];
         if (array_key_exists('includeUser', $options) && $options['includeUser']) {
-            $result['user'] = $this->getUser()->getJsonArray();
+            $result['user'] = $this->getUser()->getJson();
         }
 
         return $result;
@@ -85,22 +81,9 @@ class Order implements JsonConverterInterface
     /**
      * @return Collection|OrderProduct[]
      */
-    private function getOrderProducts(): Collection
+    private function getProducts(): Collection
     {
         return $this->products;
-    }
-
-    /**
-     * @return Collection|Product[]
-     */
-    public function getProducts(): Collection
-    {
-        $result = [];
-        foreach ($this->getOrderProducts()->getValues() as $entity) {
-            $result[] = $entity->product;
-        }
-
-        return $result;
     }
 
     public function addProduct(OrderProduct $orderProduct): self

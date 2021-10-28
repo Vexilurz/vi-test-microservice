@@ -167,7 +167,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonCon
         return $this;
     }
 
-    public function getJsonArray(array $options = []): array
+    public function getJson(array $options = []): array
     {
         return [
             'userId' => $this->getId(),
