@@ -1,14 +1,12 @@
 <?php
 
-
 namespace App\Tests;
 
-
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Symfony\Component\HttpFoundation\Response;
+use App\DataFixtures\AppFixtures;
 use Liip\TestFixturesBundle\Services\DatabaseToolCollection;
 use Liip\TestFixturesBundle\Services\DatabaseTools\AbstractDatabaseTool;
-use App\DataFixtures\AppFixtures;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\HttpFoundation\Response;
 
 abstract class VitmBaseWebTestCase extends WebTestCase
 {
@@ -35,7 +33,8 @@ abstract class VitmBaseWebTestCase extends WebTestCase
         $this->databaseTool->loadFixtures([AppFixtures::class]);
     }
 
-    private function setDefaults(): void {
+    private function setDefaults(): void
+    {
         $this->_method = 'GET';
         $this->_url = '/';
         $this->_body = [];
@@ -43,14 +42,16 @@ abstract class VitmBaseWebTestCase extends WebTestCase
         $this->_apiToken = 'test_token';
     }
 
-    public function setNotOwnerApiToken() {
+    public function setNotOwnerApiToken()
+    {
         $this->_apiToken = 'test_token2';
     }
 
-    public function getDebugString(): string {
-        return "$this->_method $this->_responseCode $this->_url".
-            "\n\rbody: ".json_encode($this->_body).
-            "\r\napiToken: $this->_apiToken";
+    public function getDebugString(): string
+    {
+        return "$this->_method $this->_responseCode $this->_url" .
+               "\n\rbody: " . json_encode($this->_body) .
+               "\r\napiToken: $this->_apiToken";
     }
 
     public function setMethod(string $method): void
@@ -83,23 +84,28 @@ abstract class VitmBaseWebTestCase extends WebTestCase
         $this->_apiToken = $apiToken;
     }
 
-    private function getHeaders(): array {
+    private function getHeaders(): array
+    {
         $headers = [];
         if ($this->_apiToken) {
             $headers['HTTP_X-AUTH-TOKEN'] = $this->_apiToken;
         }
+
         return $headers;
     }
 
-    public function getResponseJson() {
+    public function getResponseJson()
+    {
         return $this->_responseJson;
     }
 
-    public function getEntityManager() {
+    public function getEntityManager()
+    {
         return $this->_em;
     }
 
-    public function selfFail(\Exception $e) {
+    public function selfFail(\Exception $e)
+    {
         self::fail("{$e->getMessage()}\n\r{$this->getDebugString()}");
     }
 
@@ -109,9 +115,9 @@ abstract class VitmBaseWebTestCase extends WebTestCase
         self::assertResponseStatusCodeSame($this->_responseCode);
         $response = $this->_client->getResponse();
         try {
-             $this->_responseJson = !$decodeJson ? [] :
-                 json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
-        } catch(\Exception $e) {
+            $this->_responseJson = !$decodeJson ? [] :
+                json_decode($response->getContent(), true, 512, JSON_THROW_ON_ERROR);
+        } catch (\Exception $e) {
             $this->selfFail($e);
         }
     }

@@ -35,7 +35,7 @@ class OrderProduct implements JsonConverterInterface
 
     public function getJson(array $options = []): array
     {
-        return $this->product->getJson();;
+        return $this->product->getJson();
     }
 
     public function getOrder(): ?Order

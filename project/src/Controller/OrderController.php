@@ -62,7 +62,7 @@ class OrderController extends AbstractController
         }
 
         return $this->json([
-            'message' => 'product added to the order',
+            'message'               => 'product added to the order',
             'current_product_count' => $orderProduct->getProductCount()
         ]);
     }

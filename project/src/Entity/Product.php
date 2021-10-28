@@ -65,8 +65,8 @@ class Product implements JsonConverterInterface
     {
         return [
             'productId' => $this->getId(),
-            'name' => $this->getName(),
-            'price' => $this->getPrice(),
+            'name'      => $this->getName(),
+            'price'     => $this->getPrice(),
             'available' => $this->getAvailable(),
             'createdAt' => $this->getCreatedAt()->getTimestamp(),
             'updatedAt' => $this->getUpdatedAt()->getTimestamp()

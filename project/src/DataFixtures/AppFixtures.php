@@ -36,22 +36,22 @@ class AppFixtures extends Fixture
     {
         $usersData = [
             [
-                'email' => 'test@example.com',
+                'email'    => 'test@example.com',
                 'password' => 111111,
                 'apiToken' => 'test_token',
             ],
             [
-                'email' => 'test2@example.com',
+                'email'    => 'test2@example.com',
                 'password' => 111111,
                 'apiToken' => 'test_token2',
             ],
             [
-                'email' => 'user@example.com',
+                'email'    => 'user@example.com',
                 'password' => 123456,
                 'apiToken' => null,
             ],
             [
-                'email' => 'user2@example.com',
+                'email'    => 'user2@example.com',
                 'password' => 111111,
                 'apiToken' => null,
             ],
@@ -71,18 +71,18 @@ class AppFixtures extends Fixture
     {
         $productsData = [
             [
-                'name' => 'Microphone',
-                'price' => 12400,
+                'name'      => 'Microphone',
+                'price'     => 12400,
                 'available' => 5,
             ],
             [
-                'name' => 'Guitar',
-                'price' => 35125,
+                'name'      => 'Guitar',
+                'price'     => 35125,
                 'available' => 1,
             ],
             [
-                'name' => 'Keyboard',
-                'price' => 8145,
+                'name'      => 'Keyboard',
+                'price'     => 8145,
                 'available' => 5,
             ],
         ];

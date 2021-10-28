@@ -33,7 +33,7 @@ class ProductController extends AbstractController
         }
 
         return $this->json([
-            'message' => 'product added',
+            'message'   => 'product added',
             'productId' => $product->getId(),
         ]);
     }

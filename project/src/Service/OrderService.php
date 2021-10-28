@@ -9,6 +9,7 @@ use App\Service\Payment\PaymentService;
 use App\Service\Payment\Strategy\DummyPaymentStrategy;
 use App\Utils\JsonConverter;
 use DateTimeImmutable;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -84,7 +85,7 @@ class OrderService
 
         try {
             $orderProduct = $this->orderRepository->addProduct($order, $product, $productCount);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
 
@@ -98,7 +99,7 @@ class OrderService
 
         try {
             $this->orderRepository->removeProduct($order, $product);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
     }
@@ -109,7 +110,7 @@ class OrderService
         $paymentService = new PaymentService(new DummyPaymentStrategy());
         try {
             $paymentResult = $paymentService->payOrder($order);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new BadRequestHttpException($e->getMessage());
         }
 

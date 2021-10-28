@@ -68,12 +68,12 @@ class Order implements JsonConverterInterface
         $orderProducts = $this->getOrderProducts()->getValues();
         $productsSerialized = JsonConverter::getJsonFromEntitiesArray($orderProducts);
         $result = [
-            'orderId' => $this->getId(),
-            'paid' => $this->getPaid(),
+            'orderId'    => $this->getId(),
+            'paid'       => $this->getPaid(),
             'totalPrice' => $this->getTotalPrice(),
-            'products' => $productsSerialized,
-            'createdAt' => $this->getCreatedAt()->getTimestamp(),
-            'updatedAt' => $this->getUpdatedAt()->getTimestamp()
+            'products'   => $productsSerialized,
+            'createdAt'  => $this->getCreatedAt()->getTimestamp(),
+            'updatedAt'  => $this->getUpdatedAt()->getTimestamp()
         ];
         if (array_key_exists('includeUser', $options) && $options['includeUser']) {
             $result['user'] = $this->getUser()->getJson();

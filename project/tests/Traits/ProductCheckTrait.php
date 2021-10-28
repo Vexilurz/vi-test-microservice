@@ -1,16 +1,14 @@
 <?php
 
-
 namespace App\Tests\Traits;
-
 
 trait ProductCheckTrait
 {
     private function checkProductHaveFields($product): bool
     {
         return is_array($product) &&
-            array_key_exists('productId', $product) &&
-            array_key_exists('name', $product);
+               array_key_exists('productId', $product) &&
+               array_key_exists('name', $product);
     }
 
     private function checkProductInExpected($product, array $expectedProductNames = []): bool
@@ -20,6 +18,6 @@ trait ProductCheckTrait
         }
 
         return $this->checkProductHaveFields($product) &&
-            in_array($product['name'], $expectedProductNames, true);
+               in_array($product['name'], $expectedProductNames, true);
     }
 }

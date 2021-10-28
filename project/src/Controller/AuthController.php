@@ -56,7 +56,7 @@ class AuthController extends AbstractController
         }
 
         return $this->json([
-            'message' => 'login success',
+            'message'  => 'login success',
             'apiToken' => $user->getApiToken()
         ]);
     }

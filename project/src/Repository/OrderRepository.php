@@ -9,6 +9,7 @@ use App\Entity\User;
 use DateTimeImmutable;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Exception;
 
 /**
  * @method Order|null find($id, $lockMode = null, $lockVersion = null)
@@ -61,7 +62,7 @@ class OrderRepository extends ServiceEntityRepository
     public function addProduct(Order $order, Product $product, int $productCount = 1): OrderProduct
     {
         if ($productCount < 1) {
-            throw new \Exception('product count must be greater than zero');
+            throw new Exception('product count must be greater than zero');
         }
 
         $orderProduct = $this->orderProductRepository->findOrderProduct($order, $product);
@@ -78,7 +79,7 @@ class OrderRepository extends ServiceEntityRepository
         }
         $order
             ->setTotalPrice($order->getTotalPrice() + $product->getPrice() * $productCount)
-            ->setUpdatedAt(new \DateTimeImmutable('now'));
+            ->setUpdatedAt(new DateTimeImmutable('now'));
         $this->_em->flush();
 
         return $orderProduct;
@@ -88,12 +89,12 @@ class OrderRepository extends ServiceEntityRepository
     {
         $orderProduct = $this->orderProductRepository->findOrderProduct($order, $product);
         if (!$orderProduct) {
-            throw new \Exception('product not exist in order');
+            throw new Exception('product not exist in order');
         }
 
         $order
             ->setTotalPrice($order->getTotalPrice() - $product->getPrice() * $orderProduct->getProductCount())
-            ->setUpdatedAt(new \DateTimeImmutable('now'));
+            ->setUpdatedAt(new DateTimeImmutable('now'));
         $this->_em->remove($orderProduct);
         $this->_em->flush();
     }

@@ -171,7 +171,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface, JsonCon
     {
         return [
             'userId' => $this->getId(),
-            'email' => $this->getEmail()
+            'email'  => $this->getEmail()
         ];
     }
 
