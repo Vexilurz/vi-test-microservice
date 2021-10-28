@@ -6,7 +6,9 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class LoginRequestChecker extends RequestChecker
 {
-    // Must match with AuthController /login name
+    /**
+     * Must match with AuthController->login() (/login) "name=" in Route annotation
+     */
     private const LOGIN_ROUTE = 'app_login';
 
     public function __construct(UrlGeneratorInterface $urlGenerator)
